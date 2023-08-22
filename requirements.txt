@@ -1,0 +1,3 @@
+aiogram==3.0.0rc2
+SQLAlchemy==2.0.4
+environs==9.5.0

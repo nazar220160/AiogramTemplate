@@ -1,0 +1,10 @@
+[
+  {
+    "command": "/start",
+    "description": "Перезапустить бота! \uD83D\uDE80"
+  },
+  {
+    "command": "/help",
+    "description": "Поддержка! \uD83C\uDD98"
+  }
+]
