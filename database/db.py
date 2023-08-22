@@ -1,6 +1,6 @@
 import io
 from datetime import datetime
-from database.databases import User, Session, Base, engine
+from database.databases import User, Session, Base, engine, Question
 
 Base.metadata.create_all(engine)
 
@@ -99,4 +99,17 @@ def add_ref_balance(user_id, summ):
         session.query(User).filter(User.user_id == user_id).update({"ref_earned": user_info.ref_earned + summ},
                                                                    synchronize_session="fetch")
 
+        session.commit()
+
+
+def get_question(admin_message_id) -> Question:
+    with Session() as session:
+        result = session.query(Question).filter_by(admin_message_id=admin_message_id).first()
+        return result
+
+
+def add_question(user_message_id: int, admin_message_id: int):
+    with Session() as session:
+        new_user = Question(user_message_id=user_message_id, admin_message_id=admin_message_id)
+        session.add(new_user)
         session.commit()

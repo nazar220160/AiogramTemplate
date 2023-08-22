@@ -2,6 +2,7 @@ from datetime import datetime
 
 import aiogram.types
 from aiogram import Dispatcher, types, F, Bot
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
@@ -121,6 +122,28 @@ async def add_admin(message: types.Message):
             await message.answer("ID должен состоять только из цифр")
 
 
+async def answer_the_question(message: types.Message):
+    database_message = db.get_question(admin_message_id=message.reply_to_message.message_id)
+    if database_message is None:
+        await message.reply("Не найдено сообщение для ответа!")
+        return
+    if database_message.answered is True:
+        await message.reply("Сообщение уже отвечено!")
+        return
+    try:
+        await message.send_copy(chat_id=message.reply_to_message.forward_from.id,
+                                reply_to_message_id=database_message.user_message_id)
+    except TelegramBadRequest:
+        await message.reply("Пользователь удалил сообщение либо заблокировал бота!")
+        return
+    except AttributeError:
+        await message.reply("Ошибка!")
+        return
+
+    database_message.is_answer()
+    await message.reply("Ответ отправлен!")
+
+
 async def answer_photo_id(message: types.Message):
     photo_id = message.photo[-1].file_id
     await message.answer(photo_id)
@@ -137,6 +160,8 @@ def register_main_handlers(dp: Dispatcher):
     dp.message.register(get_ross_message, Admin.ross, IsAdmin())
     dp.message.register(send_money, Command('send_money'), IsAdmin())
     dp.message.register(add_admin, Command('add_admin'), IsAdmin())
+
+    dp.message.register(answer_the_question, F.reply_to_message, IsAdmin())
 
     dp.message.register(answer_photo_id, F.photo, IsAdmin())
     dp.message.register(answer_sticker_id, F.sticker, IsAdmin())

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, BigInteger, Text, Integer, Float, DateTime, update
+from sqlalchemy import create_engine, Column, BigInteger, Text, Integer, Float, DateTime, update, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -32,6 +32,29 @@ class User(Base):
                 update(table)
                 .where(table.c.user_id == self.user_id)
                 .values({column_name: new_value})
+            )
+
+            # Выполняем запрос к базе данных
+            session.execute(update_query)
+            session.commit()
+
+
+class Question(Base):
+    __tablename__ = "question"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    user_message_id = Column(BigInteger)
+    admin_message_id = Column(BigInteger)
+    answered = Column(Boolean, default=False)
+
+    def is_answer(self):
+        with Session() as session:
+            table = self.__table__
+
+            # Создаем объект запроса для обновления записи
+            update_query = (
+                update(table)
+                .where(table.c.id == self.id)
+                .values({'answered': True})
             )
 
             # Выполняем запрос к базе данных

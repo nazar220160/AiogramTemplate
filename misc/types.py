@@ -47,6 +47,9 @@ class CallbackData:
         main = _Inner()
         confirm_ross = _Inner()
 
+    class Back(metaclass=MetaInner):
+        main_manu = _Inner()
+
     @staticmethod
     def extract(data: str, c: bool = False) -> CallbackExtract:
         _data = "~".join(data.split("~")[:2])

@@ -62,3 +62,9 @@ def subscribe_chats(chat_list):
         result.row(InlineKeyboardButton(text=name, url=link))
     result.row(InlineKeyboardButton(text="Проверить", callback_data="check_subs"))
     return result.as_markup()
+
+
+def support():
+    result = InlineKeyboardBuilder()
+    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cb.Back.main_manu()))
+    return result.as_markup()

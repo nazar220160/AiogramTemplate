@@ -4,7 +4,7 @@
     "description": "Перезапустить бота! \uD83D\uDE80"
   },
   {
-    "command": "/help",
+    "command": "/support",
     "description": "Поддержка! \uD83C\uDD98"
   }
 ]
