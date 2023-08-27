@@ -46,6 +46,7 @@ async def back(callback: types.CallbackQuery, state: FSMContext, user_info: mode
 
 def register_main_handlers(dp: Dispatcher):
     dp.message.register(start, CommandStart())
+
     dp.message.register(support, Command('support'))
 
     dp.callback_query.register(back, lambda c: Cb.extract(c.data, True).data == Cb.Back())

@@ -22,8 +22,7 @@ class DatabaseCheck(BaseMiddleware):
                 if ref_id is None or not ref_id.isdigit() or not await base.check_user(user_id=int(ref_id)):
                     ref_id = None
                 await base.add_user(user_id=from_user.id, first_name=from_user.first_name,
-                                    last_name=from_user.last_name, username=from_user.username,
-                                    lang=from_user.language_code, ref_id=ref_id)
+                                    last_name=from_user.last_name, username=from_user.username, ref_id=ref_id)
 
         user_info = await base.get_user_by_user_id(user_id=from_user.id)
         data['user_info'] = user_info

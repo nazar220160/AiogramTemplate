@@ -42,14 +42,14 @@ async def remove_admin(user_id: int):
         await session.commit()
 
 
-async def add_user(user_id: int, lang: str, first_name, last_name, username, ref_id=None) -> User:
+async def add_user(user_id: int, first_name, last_name, username, ref_id=None) -> User:
     async with Session() as session:
         result = await session.execute(sa.select(User).filter(User.user_id == int(user_id)))
         existing_user = result.scalar_one_or_none()
 
         if existing_user is None:
-            new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, username=username,
-                            ref_id=ref_id, lang=lang, register_datetime=datetime.now())
+            new_user = User(user_id=user_id, first_name=first_name, last_name=last_name,
+                            username=username, ref_id=ref_id, register_datetime=datetime.now())
             session.add(new_user)
             await session.commit()
 
