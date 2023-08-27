@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from telegram_bot.misc.data_classes import CallbackExtract
 
 
 class AutoClassName(type):
@@ -29,12 +29,6 @@ class _Inner:
             return self.name
         args = map(str, args)  # Convert all elements in args to strings
         return f"{self.name}~{'~'.join(args)}"
-
-
-@dataclass
-class CallbackExtract:
-    data: str
-    args: list
 
 
 class CallbackData:

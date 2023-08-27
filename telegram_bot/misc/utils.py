@@ -6,7 +6,6 @@ from aiogram import Bot, types
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import ChatMemberLeft
 
-from config import sub_list, bot_commands
 from html.parser import HTMLParser
 
 
@@ -39,7 +38,7 @@ def extract_unique_code(text) -> str:
     return text.split()[1] if len(text.split()) > 1 else None
 
 
-async def check_sub(bot: Bot, user_id: int):
+async def check_sub(bot: Bot, user_id: int, sub_list):
     not_sub_list = []
     for chat in sub_list:
         try:
@@ -60,7 +59,7 @@ def get_user_tasks(user_id) -> list[asyncio.Task]:
     return tasks
 
 
-async def set_bot_commands(bot: Bot):
+async def set_bot_commands(bot: Bot, bot_commands):
     result = [types.BotCommand(command=i['command'], description=i['description']) for i in bot_commands]
     await bot.set_my_commands(result)
 

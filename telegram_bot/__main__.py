@@ -1,6 +1,7 @@
 import asyncio
 from datetime import datetime
 
+import config
 from telegram_bot.handlers import register_start_handlers
 from telegram_bot.middlewares import register_all_middlewares
 from telegram_bot.misc.loader import dp, bot
@@ -10,7 +11,7 @@ from telegram_bot.misc.utils import set_bot_commands
 async def main() -> None:
     register_all_middlewares(dp=dp)
     register_start_handlers(dp=dp)
-    await set_bot_commands(bot=bot)
+    await set_bot_commands(bot=bot, bot_commands=config.bot_commands)
 
     bot_info = await bot.me()
     print(f'Hi {bot_info.username}. Bot started OK!\n «««  {datetime.now().replace(microsecond=0)}  »»»')

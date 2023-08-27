@@ -2,6 +2,7 @@ from aiogram import BaseMiddleware, Bot
 from typing import Callable, Dict, Any, Awaitable
 from aiogram.types import TelegramObject, User, Message, CallbackQuery
 
+import config
 from telegram_bot import keyboards
 from telegram_bot.database import base
 from telegram_bot.misc.utils import extract_unique_code, check_sub
@@ -35,7 +36,7 @@ class DatabaseCheck(BaseMiddleware):
             await user_info.edit_info(column_name="last_name", new_value=from_user.last_name)
 
         bot: Bot = data['bot']
-        not_sub_list = await check_sub(bot=bot, user_id=from_user.id)
+        not_sub_list = await check_sub(bot=bot, user_id=from_user.id, sub_list=config.sub_list)
 
         if not not_sub_list:
             result = await handler(event, data)
