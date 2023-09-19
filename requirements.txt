@@ -1,6 +1,9 @@
-aiogram==3.0.0rc2
+aiogram==3.0.0
 SQLAlchemy==2.0.4
-environs==9.5.0
+alembic==1.11.3
 nest-asyncio==1.5.7
+environs==9.5.0
 asyncpg
-alembic
+redis==5.0.0
+pydantic-settings==2.0.3
+pydantic==2.3.0
