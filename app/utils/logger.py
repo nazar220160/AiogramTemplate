@@ -19,7 +19,7 @@ class Logger(logging.Logger):
             name: str = 'root',
             level: int = logging.INFO,
             use_default_handlers: bool = True,
-            logging_exceptions: Dict[str, int] = LOGGING_EXCEPTIONS
+            logging_exceptions: Dict[str, int] = LOGGING_EXCEPTIONS  # noqa
     ) -> None:
         super().__init__(name, level)
         os.makedirs(Settings.path('logs'), exist_ok=True)

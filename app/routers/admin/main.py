@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import List
 
 import aiogram.types
-from aiogram import types, F, Bot
+from aiogram import types, F
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -9,24 +10,26 @@ from aiogram.fsm.context import FSMContext
 import app.utils.texts.admin
 from app import keyboards
 from app.common.filters import IsAdmin
-from app.database.core import Database
-from app.utils.callback import CallbackData as Cb
 from app.common.states.admin import Newsletter
-from app.utils.other import can_delete_admin
+from app.core.models import MyBot
+from app.core.settings import Settings
+from app.database.core import Database
+from app.database.dto import UserDTO, UserUpdate, QuestionUpdate
 from app.routers.admin.router import admin_router
+from app.utils.callback import CallbackData as Cb
+from app.utils.other import paginate
 
 
 @admin_router.message(Command('admin'), IsAdmin())
 async def start(message: types.Message, db: Database):
-    await message.delete()
-    all_users = await base.get_all_users()
+    all_users = await db.user.select_many()
     await message.answer(app.utils.texts.admin.start(len_users=len(all_users)),
                          reply_markup=keyboards.inline.admin())
 
 
 @admin_router.callback_query(lambda c: Cb.extract(c.data, True).data == Cb.Admin(), IsAdmin())
-async def admin_callback(callback: types.CallbackQuery, state: FSMContext):
-    data = Cb.extract(data=callback.data)
+async def admin_callback(callback: types.CallbackQuery, state: FSMContext, db: Database, settings: Settings) -> None:
+    data = Cb.extract(cd=callback.data)
     if data.data == Cb.Admin.ross():
         await state.set_state(Newsletter.message)
         await state.set_data({'message_id': callback.message.message_id})
@@ -35,43 +38,43 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext):
     elif data.data == Cb.Admin.main():
         await state.clear()
         await callback.message.delete()
-        all_users = await base.get_all_users()
+        all_users = await db.user.select_many()
         await callback.message.answer(app.utils.texts.admin.start(len_users=len(all_users)),
                                       reply_markup=app.keyboards.inline.admin())
     elif data.data == Cb.Admin.confirm_ross():
-        await ross(callback.message, user_id=callback.from_user.id)
+        list_users = await db.user.select_many()
+        await ross(callback.message, user_id=callback.from_user.id, list_users=list_users)
 
     elif data.data == Cb.Admin.get_admins():
-        list_admins = await base.get_all_admins()
-        pag = pagination(list_pages=list_admins, len_pages=6)
-        reply_markup = keyboards.inline.admin_list(pag, owner_id=callback.from_user.id)
-        await callback.message.edit_reply_markup(reply_markup=reply_markup)
+        list_admins = await db.user.get_admins()
+        pag = paginate(list_items=list_admins, items_per_page=5)
+        await callback.message.edit_reply_markup(reply_markup=keyboards.inline.admin_list(ls=pag))
 
     elif data.data == Cb.Admin.remove_admin():
-        admin_info = await base.get_user_by_id(id_user=int(data.args[0]))
-        if can_delete_admin(is_admin=admin_info.is_admin, owner_id=callback.from_user.id, user_id=admin_info.user_id):
-            await base.remove_admin(user_id=admin_info.user_id)
+        if callback.from_user.id not in settings.admins:
+            await callback.answer(text="Недостаточно прав!", show_alert=True)
+            return
 
-        list_admins = await base.get_all_admins()
-        pag = pagination(list_pages=list_admins, len_pages=6)
-        reply_markup = app.keyboards.inline.admin_list(pag, owner_id=callback.from_user.id)
-        await callback.message.edit_reply_markup(reply_markup=reply_markup)
+        await db.user.update(user_id=int(data.args[0]), query=UserUpdate(admin=False))
+        list_admins = await db.user.get_admins()
+
+        pag = paginate(list_items=list_admins, items_per_page=5)
+        await callback.message.edit_reply_markup(reply_markup=keyboards.inline.admin_list(ls=pag))
 
     elif data.data == Cb.Admin.move_admins():
         page_num = int(data.args[0])
-        list_admins = await base.get_all_admins()
+        list_admins = await db.user.get_admins()
 
-        pag = pagination(list_pages=list_admins, len_pages=6)
-        reply_markup = app.keyboards.inline.admin_list(pag, owner_id=callback.from_user.id, page_num=page_num)
+        pag = paginate(list_items=list_admins, items_per_page=5)
+        reply_markup = app.keyboards.inline.admin_list(pag, page_num=page_num)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
 
-async def ross(message: types.Message, user_id: int):
+async def ross(message: types.Message, user_id: int, list_users: List[UserDTO]):
     errors = []
     good = 0
-    all_users = await base.get_all_users()
     file_text = b''
-    for i in all_users:
+    for i in list_users:
         if i.user_id == user_id:
             continue
         try:
@@ -91,7 +94,7 @@ async def ross(message: types.Message, user_id: int):
 
 
 @admin_router.message(Newsletter.message, IsAdmin())
-async def get_ross_message(message: types.Message, state: FSMContext, bot: Bot):
+async def get_ross_message(message: types.Message, state: FSMContext, bot: MyBot):
     data = await state.get_data()
     await state.clear()
     await message.copy_to(chat_id=message.from_user.id, reply_markup=app.keyboards.inline.confirm_ross())
@@ -100,7 +103,7 @@ async def get_ross_message(message: types.Message, state: FSMContext, bot: Bot):
 
 
 @admin_router.message(Command('add_admin'), IsAdmin())
-async def add_admin(message: types.Message):
+async def add_admin(message: types.Message, db: Database):
     message_args = message.text.split()
     if len(message_args) < 2:
         await message.answer("Для отправки монет пользователя введите команду:\n"
@@ -109,15 +112,17 @@ async def add_admin(message: types.Message):
     else:
         try:
             user_id = int(message_args[1])
-            await base.add_admin(user_id=user_id, owner_id=message.from_user.id)
+            await db.user.update(user_id=user_id, query=UserUpdate(admin=True))
             await message.answer(f"Успешно")
         except ValueError:
             await message.answer("ID должен состоять только из цифр")
 
 
 @admin_router.message(F.reply_to_message, IsAdmin())
-async def answer_the_question(message: types.Message):
-    database_message = await base.get_question(admin_message_id=message.reply_to_message.message_id)
+async def answer_the_question(message: types.Message, db: Database):
+    message_id = message.reply_to_message.message_id
+
+    database_message = await db.question.select(admin_message_id=message_id)
     if database_message is None:
         await message.reply("Не найдено сообщение для ответа!")
         return
@@ -134,7 +139,7 @@ async def answer_the_question(message: types.Message):
         await message.reply("Ошибка!")
         return
 
-    await database_message.is_answer()
+    await db.question.update(admin_message_id=message_id, query=QuestionUpdate(answered=True))
     await message.reply("Ответ отправлен!")
 
 

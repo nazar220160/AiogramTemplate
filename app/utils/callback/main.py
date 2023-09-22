@@ -17,9 +17,9 @@ class CallbackData:
         main_manu = _Inner()
 
     @staticmethod
-    def extract(data: str, c: bool = False) -> CallbackExtract:
-        _data = "~".join(data.split("~")[:2])
-        args = data.split("~")[2:] if len(data.split("~")) > 2 else None
+    def extract(cd: str, c: bool = False, split_symbol: str = ':') -> CallbackExtract:
+        args = cd.split(split_symbol)[1:] if len(cd.split(split_symbol)) > 1 else None
+        cb_data = cd.split(split_symbol)[0]
         if c is True:
-            return CallbackExtract(data=data.split("~")[0], args=args)
-        return CallbackExtract(data=_data, args=args)
+            cb_data = cb_data.split('~')[0]
+        return CallbackExtract(data=cb_data, args=args)

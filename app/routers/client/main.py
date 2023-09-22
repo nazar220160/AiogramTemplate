@@ -2,10 +2,11 @@ from aiogram import types
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 
+from app.core.settings import Settings
 from app.utils import texts
 from app import keyboards
 from app.database.core import Database
-from app.database.dto import UserCreate
+from app.database.dto import UserCreate, QuestionCreate
 from app.common.states.main import Support
 
 from app.utils.callback import CallbackData as Cb
@@ -34,11 +35,14 @@ async def support(message: types.Message, state: FSMContext):
 
 
 @client_router.message(Support.message)
-async def get_support_message(message: types.Message, state: FSMContext):
+async def get_support_message(message: types.Message, state: FSMContext,
+                              settings: Settings, db: Database):
     await state.clear()
-    admin_list = await base.get_all_admins()
-    mes = await message.forward(chat_id=admin_list[0].user_id)
-    await base.add_question(user_message_id=message.message_id, admin_message_id=mes.message_id)
+    mes = await message.forward(chat_id=settings.admins[0])
+    await db.question.create(query=QuestionCreate(
+        user_message_id=message.message_id,
+        admin_message_id=mes.message_id
+    ))
     await message.reply("Ваше сообщение отправлено администратору. Ожидайте ответа.")
 
 

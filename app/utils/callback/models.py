@@ -30,8 +30,8 @@ class _Inner:
     def __init__(self):
         self.name = None
 
-    def __call__(self, *args):
+    def __call__(self, *args, split_symbol: str = ":"):
         if not args:
             return self.name
         args = map(str, args)  # Convert all elements in args to strings
-        return f"{self.name}~{'~'.join(args)}"
+        return f"{self.name}{split_symbol}{split_symbol.join(args)}"

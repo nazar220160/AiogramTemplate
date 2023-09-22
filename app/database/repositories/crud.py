@@ -43,7 +43,6 @@ class CRUDRepository(AbstractCRUDRepository[Model]):
     async def create_many(self, data: Iterable[Union[Model, Dict[str, Any]]]) -> Sequence[Model]:
         stmt = (
             insert(self.model)
-            .prefix_with('OR IGNORE')
             .returning(self.model)
         )
         params = [model if isinstance(model, dict) else model.as_dict() for model in data]
@@ -86,7 +85,7 @@ class CRUDRepository(AbstractCRUDRepository[Model]):
     async def update_many(self, data: Iterable[Union[Model, Dict[str, Any]]]) -> CursorResult[Any]:
         params = [model if isinstance(model, dict) else model.as_dict() for model in data]
 
-        return (await self._session.execute(update(self.model), params))
+        return await self._session.execute(update(self.model), params)
 
     async def delete(self, *clauses: ColumnElement[bool]) -> Sequence[Model]:
         stmt = (

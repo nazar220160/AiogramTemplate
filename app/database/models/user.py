@@ -29,4 +29,4 @@ class User(Base, ModelWithTime):
     can_join_groups: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
     can_read_all_group_messages: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
     supports_inline_queries: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
-    admin: Mapped[Optional[bool]] = mapped_column(Boolean)
+    admin: Mapped[bool] = mapped_column(Boolean)

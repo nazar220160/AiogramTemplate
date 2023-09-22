@@ -9,11 +9,11 @@ from app.database.repositories import REPOSITORIES
 class Mediator:
 
     def __init__(self) -> None:
-        self._repositories: Dict[str, BaseRepository] = {}
+        self._repositories: Dict[str, BaseRepository[Any]] = {}
 
     def add(
             self,
-            repository_instance: BaseRepository,
+            repository_instance: BaseRepository[Any],
             repository_name: Optional[str] = None
     ) -> None:
 

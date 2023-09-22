@@ -10,7 +10,6 @@ from app.core import (
     load_storage,
     load_settings,
 )
-from app.utils import PaginationMediator
 
 
 async def on_startup(dp, bot) -> None:
@@ -30,11 +29,9 @@ async def main() -> None:
 
     bot_info = await bot.me()
     print(f'Hi {bot_info.username}. Bot started OK!\n «««  {datetime.now().replace(microsecond=0)}  »»»')
-
     await dp.start_polling(
         bot, settings=settings,
-        allowed_updates=dp.resolve_used_update_types(),
-        pagination=PaginationMediator()
+        allowed_updates=dp.resolve_used_update_types()
     )
 
 

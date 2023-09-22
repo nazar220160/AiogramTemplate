@@ -9,6 +9,7 @@ from app.database.core.connection import async_session
 from app.database.core.mediator import build_mediator
 from app.database.repositories import (
     UserRepository,
+    QuestionRepository,
 )
 
 
@@ -31,3 +32,7 @@ class Database:
     @property
     def user(self) -> UserRepository:
         return self._mediator.userrepository  # type: ignore
+
+    @property
+    def question(self) -> QuestionRepository:
+        return self._mediator.questionrepository  # type: ignore

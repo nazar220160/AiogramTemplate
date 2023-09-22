@@ -9,6 +9,6 @@ router = Router(name='main')
 router.include_routers(
     admin_router,
     client_router,
-    error_router,
     other_router,
+    error_router,
 )

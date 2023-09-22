@@ -18,7 +18,7 @@ _StrPath: TypeAlias = Union[os.PathLike[str], str, Path]
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file='./.env',
+        env_file='../.env',
         env_file_encoding='utf-8',
         case_sensitive=False
     )
@@ -29,13 +29,15 @@ class Settings(BaseSettings):
     database_port: Optional[int] = None
     database_user: Optional[str] = None
     database_pass: Optional[str] = None
-    admins: Optional[List[int]] = None
+    admins: Optional[List[int]] = []
     parse_mode: Union[ParseMode, str] = ParseMode.HTML
     disable_web_page_preview: Optional[bool] = True
     redis_settings: Dict[str, Any] = {}
 
     @property
     def db_url(self) -> str:
+        if 'sqlite' in self.database_uri:
+            return self.database_uri.format(self.database_name)
         return self.database_uri.format(
             self.database_user,
             self.database_pass,
