@@ -5,37 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b36ecd67-8275-448d-a4da-e0c0f8fcc076" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/core/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/database/dto/question.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/database/repositories/question.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/utils/interactions/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/utils/interactions/chat.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/utils/polling_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/core/loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/core/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/converters.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/converters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/core/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/core/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/core/mediator.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/core/mediator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/dto/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/dto/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/dto/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/dto/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/repositories/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/repositories/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/repositories/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/repositories/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/repositories/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/repositories/crud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/repositories/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/repositories/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/keyboards/inline.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/keyboards/inline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/admin/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/admin/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/client/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/client/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/callback/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/callback/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/callback/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/callback/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/logger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/other.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/other.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/pagination.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +110,7 @@
       <workItem from="1695373687981" duration="1289000" />
       <workItem from="1695296023588" duration="3552000" />
       <workItem from="1695342138779" duration="101000" />
-      <workItem from="1695342250770" duration="1780000" />
+      <workItem from="1695342250770" duration="2562000" />
     </task>
     <servers />
   </component>
@@ -169,7 +141,7 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/AiogramTemplate$app.coverage" NAME="app Coverage Results" MODIFIED="1695344036178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/AiogramTemplate$app.coverage" NAME="app Coverage Results" MODIFIED="1695344815394" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
     <SUITE FILE_PATH="coverage/AiogramTemplate$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1695171252072" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
   </component>
 </project>

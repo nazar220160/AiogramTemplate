@@ -10,6 +10,7 @@ from app.core import (
     load_storage,
     load_settings,
 )
+from app.utils.polling_manager import PollingManager
 
 
 async def on_startup(dp, bot) -> None:
@@ -24,13 +25,14 @@ async def main() -> None:
     bot = load_bot(settings=settings)
     storage = load_storage(settings=settings)
     dp = load_dispatcher(storage=storage)
+    polling_manager = PollingManager()
 
     await on_startup(bot=bot, dp=dp)
 
     bot_info = await bot.me()
     print(f'Hi {bot_info.username}. Bot started OK!\n «««  {datetime.now().replace(microsecond=0)}  »»»')
     await dp.start_polling(
-        bot, settings=settings,
+        bot, settings=settings, polling_manager=polling_manager,
         allowed_updates=dp.resolve_used_update_types()
     )
 
