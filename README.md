@@ -4,23 +4,23 @@
 
 This is a template for telegram bot on aiogram3 using asynchronous database and redis<hr/>
 
-## Setting up the .env file
-
-
-```
-Rename the .env-example file to .env and set your settings
-```
-
-
-## Local installation on Linux
-
+## Cloning repository
 ```sh
 # Cloning the repository
 $ git clone https://github.com/nazar220160/AiogramTemplate
 
 # Goes to the directory with the bot
 $ cd AiogramTemplate
+```
 
+### Setting up the .env file
+```
+Rename the .env-example file to .env and set your settings
+```
+
+## Local installation on Linux
+
+```sh
 # Creating a virtual environment
 $ python3 -m venv venv
 
@@ -37,12 +37,6 @@ $ python3 -m app
 ## Installation on Docker
 
 ```bash
-# Cloning the repository
-git clone https://github.com/nazar220160/AiogramTemplate
-
-# Goes to the directory with the bot
-cd AiogramTemplate
-
 # Build a docker container
 docker-compose build
 
