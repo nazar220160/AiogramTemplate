@@ -4,13 +4,14 @@ from datetime import datetime
 from app.common.middlewares import register_middlewares
 from app.utils.other import set_bot_commands
 from app.routers import router
+from app.utils.polling_manager import PollingManager
+
 from app.core import (
     load_bot,
     load_dispatcher,
     load_storage,
     load_settings,
 )
-from app.utils.polling_manager import PollingManager
 
 
 async def on_startup(dp, bot) -> None:
