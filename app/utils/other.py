@@ -1,7 +1,11 @@
 import time
-from typing import Iterator
+from typing import List
 
 from aiogram import Bot, types
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import ChatMemberLeft
+
+from app.database.dto import ComSubChatsDTO
 
 
 class AutoExpireList:
@@ -40,3 +44,18 @@ def paginate(list_items, items_per_page):
         page = list_items[i:i + items_per_page]
         paginated_list.append(page)
     return [[]] if not paginated_list else paginated_list
+
+
+async def check_com_sub(bot: Bot,
+                        user_id: int,
+                        sub_list: List[ComSubChatsDTO]
+                        ) -> List[ComSubChatsDTO]:
+    not_sub_list = []
+    for chat in sub_list:
+        try:
+            check = await bot.get_chat_member(chat_id=chat.chat_id, user_id=user_id)
+        except TelegramBadRequest:
+            continue
+        if isinstance(check, ChatMemberLeft):
+            not_sub_list.append(chat)
+    return not_sub_list

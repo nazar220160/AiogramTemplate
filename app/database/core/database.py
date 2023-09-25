@@ -10,6 +10,7 @@ from app.database.core.mediator import build_mediator
 from app.database.repositories import (
     UserRepository,
     QuestionRepository,
+    ComSubChatsRepository,
 )
 
 
@@ -36,3 +37,7 @@ class Database:
     @property
     def question(self) -> QuestionRepository:
         return self._mediator.questionrepository  # type: ignore
+
+    @property
+    def com_sub_chats(self) -> ComSubChatsRepository:
+        return self._mediator.comsubchatsrepository  # type: ignore

@@ -12,6 +12,11 @@ class CallbackData:
         move_admins = _Inner()
         main = _Inner()
         confirm_ross = _Inner()
+        com_sub = _Inner()
+        remove_com_chat = _Inner()
+        move_com_chats = _Inner()
+        add_com_chat = _Inner()
+        com_chat_toggle_turn = _Inner()
 
     class Back(metaclass=MetaInner):
         main_manu = _Inner()
