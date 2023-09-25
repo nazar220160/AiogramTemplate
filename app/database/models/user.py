@@ -6,7 +6,6 @@ from sqlalchemy import (
     String,
     Boolean,
     BigInteger,
-    Text,
 )
 
 from app.database.models.base import ModelWithTime, Base
@@ -21,9 +20,9 @@ class User(Base, ModelWithTime):
     is_bot: Mapped[bool] = mapped_column(
         Boolean
     )
-    first_name: Mapped[str] = mapped_column(Text(64))
-    username: Mapped[Optional[str]] = mapped_column(Text(32), nullable=True)
-    last_name: Mapped[Optional[str]] = mapped_column(Text(64), nullable=True)
+    first_name: Mapped[str] = mapped_column(String(64))
+    username: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    last_name: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     language_code: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     is_premium: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
     added_to_attachment_menu: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
