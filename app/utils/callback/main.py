@@ -19,7 +19,7 @@ class CallbackData:
         com_chat_toggle_turn = _Inner()
 
     class Back(metaclass=MetaInner):
-        main_manu = _Inner()
+        main_menu = _Inner()
 
     @staticmethod
     def extract(cd: str, c: bool = False, split_symbol: str = ':') -> CallbackExtract:

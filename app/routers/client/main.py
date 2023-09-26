@@ -49,7 +49,7 @@ async def get_support_message(message: types.Message, state: FSMContext,
 @client_router.callback_query(lambda c: Cb.extract(c.data, True).data == Cb.Back())
 async def back(callback: types.CallbackQuery, state: FSMContext):
     data = Cb.extract(callback.data)
-    if data.data == Cb.Back.main_manu():
+    if data.data == Cb.Back.main_menu():
         await state.clear()
         await callback.message.delete()
 

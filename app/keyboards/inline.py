@@ -20,7 +20,7 @@ def admin():
                                     callback_data=Cd.Admin.get_admins()))
     result.row(InlineKeyboardButton(text="💭 Обязательная подписка",
                                     callback_data=Cd.Admin.com_sub()))
-    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Back.main_manu()))
+    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Back.main_menu()))
     return result.as_markup()
 
 
@@ -85,7 +85,7 @@ def confirm_ross():
 
 def support():
     result = InlineKeyboardBuilder()
-    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Back.main_manu()))
+    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Back.main_menu()))
     return result.as_markup()
 
 
