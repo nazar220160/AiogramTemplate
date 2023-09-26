@@ -12,7 +12,8 @@ def convert_user_model_to_dto(user: User) -> UserDTO:
         first_name=user.first_name,
         last_name=user.last_name,
         language_code=user.language_code,
-        is_premium=user.is_premium
+        is_premium=user.is_premium,
+        admin=user.admin
     )
 
 

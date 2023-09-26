@@ -11,7 +11,7 @@ class ComSubChatsCreate(BaseModel):
 class ComSubChatsUpdate(BaseModel):
     chat_id: Optional[int] = None
     username: Optional[str] = None
-    turn: Optional[bool] = True
+    turn: Optional[bool] = None
 
 
 class ComSubChatsDTO(BaseModel):

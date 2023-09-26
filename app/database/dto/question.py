@@ -11,7 +11,7 @@ class QuestionCreate(BaseModel):
 class QuestionUpdate(BaseModel):
     user_message_id: Optional[int] = None
     admin_message_id: Optional[int] = None
-    answered: Optional[bool] = False
+    answered: Optional[bool] = None
 
 
 class QuestionDTO(BaseModel):

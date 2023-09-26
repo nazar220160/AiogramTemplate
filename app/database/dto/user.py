@@ -18,7 +18,7 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = None
     language_code: Optional[str] = None
     is_premium: Optional[bool] = None
-    admin: Optional[bool] = False
+    admin: Optional[bool] = None
 
 
 class UserDTO(BaseModel):
@@ -28,7 +28,7 @@ class UserDTO(BaseModel):
     last_name: Optional[str] = None
     language_code: Optional[str] = None
     is_premium: Optional[bool] = None
-    admin: Optional[bool] = False
+    admin: bool
 
     @property
     def full_name(self) -> str:
