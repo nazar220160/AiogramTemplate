@@ -10,7 +10,7 @@ from typing import (
     Sequence,
     TypeVar,
 )
-from sqlalchemy import ColumnElement
+from sqlalchemy import ColumnExpressionArgument
 
 EntryType = TypeVar('EntryType')
 
@@ -34,14 +34,14 @@ class AbstractCRUDRepository(abc.ABC, Generic[EntryType]):
     @abc.abstractmethod
     async def select(
             self,
-            *clauses: ColumnElement[bool],
+            *clauses: ColumnExpressionArgument[bool],
     ) -> Optional[EntryType]:
         raise NotImplementedError
 
     @abc.abstractmethod
     async def select_many(
             self,
-            *clauses: ColumnElement[bool],
+            *clauses: ColumnExpressionArgument[bool],
             offset: Optional[int],
             limit: Optional[int],
     ) -> Sequence[EntryType]:
@@ -50,7 +50,7 @@ class AbstractCRUDRepository(abc.ABC, Generic[EntryType]):
     @abc.abstractmethod
     async def update(
             self,
-            *clauses: ColumnElement[bool],
+            *clauses: ColumnExpressionArgument[bool],
             **values: Dict[str, Any]
     ) -> Sequence[EntryType]:
         raise NotImplementedError
@@ -60,5 +60,5 @@ class AbstractCRUDRepository(abc.ABC, Generic[EntryType]):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def delete(self, *clauses: ColumnElement[bool]) -> Sequence[EntryType]:
+    async def delete(self, *clauses: ColumnExpressionArgument[bool]) -> Sequence[EntryType]:
         raise NotImplementedError

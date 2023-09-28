@@ -1,5 +1,5 @@
 aiogram==3.0.0
-SQLAlchemy==2.0.4
+SQLAlchemy==2.0.21
 alembic==1.11.3
 nest-asyncio==1.5.7
 environs==9.5.0
