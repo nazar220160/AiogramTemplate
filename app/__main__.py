@@ -1,6 +1,8 @@
 import asyncio
 from datetime import datetime
 
+from aiogram import Bot, Dispatcher
+
 from app.common.middlewares import register_middlewares
 from app.utils.other import set_bot_commands
 from app.routers import router
@@ -14,9 +16,9 @@ from app.core import (
 )
 
 
-async def on_startup(dp, bot) -> None:
-    register_middlewares(dp=dp)
-    dp.include_router(router)
+async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
+    register_middlewares(dp=dispatcher)
+    dispatcher.include_router(router)
     await set_bot_commands(bot=bot)
     await bot.delete_webhook(drop_pending_updates=True)
 
@@ -28,8 +30,7 @@ async def main() -> None:
     dp = load_dispatcher(storage=storage)
     polling_manager = PollingManager()
 
-    await on_startup(bot=bot, dp=dp)
-
+    dp.startup.register(on_startup)
     bot_info = await bot.me()
     print(f'Hi {bot_info.username}. Bot started OK!\n «««  {datetime.now().replace(microsecond=0)}  »»»')
     await dp.start_polling(
