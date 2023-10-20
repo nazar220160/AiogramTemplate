@@ -35,7 +35,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, db: D
         await state.set_state(Newsletter.message)
         await state.set_data({'message_id': callback.message.message_id})
         await callback.message.edit_text("<b>Отправьте сообщение для рассылки</b>",
-                                         reply_markup=keyboards.inline.back_to_admin())
+                                         reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
     elif data.data == Cb.Admin.main():
         await state.clear()
         await callback.message.delete()
@@ -59,7 +59,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, db: D
     elif data.data == Cb.Admin.add_com_chat():
         await callback.message.delete()
         await state.set_state(ComChatCreator.chat_id)
-        reply_markup = keyboards.inline.back_to_admin()
+        reply_markup = keyboards.inline.back(to=Cb.Admin.main())
         await callback.message.answer(texts.ADD_COM_CHAT, reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.remove_com_chat():
@@ -80,14 +80,14 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, db: D
         chat_id = int(data.args[0])
 
         chat_info = await db.com_sub_chats.select(chat_id=chat_id)
-        list_admins = await db.com_sub_chats.update(
+        list_chats = await db.com_sub_chats.update(
             chat_id=chat_id,
             query=ComSubChatsUpdate(
                 turn=not chat_info.turn
             )
         )
 
-        pag = paginate(list_items=list_admins, items_per_page=5)
+        pag = paginate(list_items=list_chats, items_per_page=5)
         reply_markup = keyboards.inline.com_chats(pag)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
@@ -131,7 +131,7 @@ async def ross(message: types.Message, user_id: int, list_users: List[UserDTO]):
     await message.edit_reply_markup()
     await message.reply_document(document=text_file,
                                  caption=f'<b>Завершено. Успешно: {good}. Неудач: {len(errors)}</b>',
-                                 reply_markup=keyboards.inline.back_to_admin())
+                                 reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
 
 
 @admin_router.message(Newsletter.message, IsAdmin())
@@ -186,7 +186,7 @@ async def answer_the_question(message: types.Message, db: Database):
 
 @admin_router.message(ComChatCreator.chat_id, IsAdmin())
 async def get_com_chat(message: types.Message, bot: MyBot, db: Database, state: FSMContext):
-    back_kb = keyboards.inline.back_to_admin()
+    back_kb = keyboards.inline.back(to=Cb.Admin.main())
     if not message.forward_from_chat and not message.forward_from and message.text:
         try:
             chat_id = int(message.text)

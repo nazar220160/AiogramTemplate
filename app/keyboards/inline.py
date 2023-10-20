@@ -69,12 +69,6 @@ def com_chats(ls: list[list[ComSubChatsDTO]], page_num=0):
     return result.as_markup()
 
 
-def back_to_admin():
-    result = InlineKeyboardBuilder()
-    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Admin.main()))
-    return result.as_markup()
-
-
 def confirm_ross():
     result = InlineKeyboardBuilder()
     confirm = InlineKeyboardButton(text="✅ Подтвердить", callback_data=Cd.Admin.confirm_ross())
@@ -83,9 +77,14 @@ def confirm_ross():
     return result.as_markup()
 
 
-def support():
+def back(to, main_menu: bool = False, cancel: bool = False):
+    text = "🔙 Назад"
+    if cancel is True:
+        text = "❌ Отменить"
+    if main_menu is True:
+        text = "🔙 В главное меню"
     result = InlineKeyboardBuilder()
-    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Back.main_menu()))
+    result.add(InlineKeyboardButton(text=text, callback_data=to))
     return result.as_markup()
 
 

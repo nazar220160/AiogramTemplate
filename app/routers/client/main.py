@@ -31,7 +31,10 @@ async def start(message: types.Message, state: FSMContext, db: Database):
 @client_router.message(Command('support'))
 async def support(message: types.Message, state: FSMContext):
     await state.set_state(Support.message)
-    await message.reply(text=texts.main.SUPPORT, reply_markup=keyboards.inline.support())
+    await message.reply(text=texts.main.SUPPORT, reply_markup=keyboards.inline.back(
+        to=Cb.Back.main_menu(),
+        main_menu=True
+    ))
 
 
 @client_router.message(Support.message)
