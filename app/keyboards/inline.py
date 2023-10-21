@@ -94,3 +94,13 @@ def subscribe_chats(chat_list: List[ComSubChatsDTO]):
         link = f"https://t.me/{chat.username}"
         result.row(InlineKeyboardButton(text=chat.username, url=link))
     return result.as_markup()
+
+
+def add_com_chat(bot_username: str):
+    result = InlineKeyboardBuilder()
+    url_channel = f'http://t.me/{bot_username}?startchannel&admin=change_info+post_messages+edit_messages+delete_messages+restrict_members+invite_users+pin_messages+promote_members+manage_video_chats+anonymous+manage_chat'
+    url_group = f'http://t.me/{bot_username}?startgroup&admin=change_info+post_messages+edit_messages+delete_messages+restrict_members+invite_users+pin_messages+promote_members+manage_video_chats+anonymous+manage_chat'
+    result.row(InlineKeyboardButton(text="Добавить в канал", url=url_channel))
+    result.add(InlineKeyboardButton(text="Добавить в группу", url=url_group))
+    result.row(InlineKeyboardButton(text="🔙 Назад", callback_data=Cd.Admin.com_sub()))
+    return result.as_markup()

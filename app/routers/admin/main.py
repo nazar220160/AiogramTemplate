@@ -29,7 +29,7 @@ async def start(message: types.Message, db: Database):
 
 
 @admin_router.callback_query(lambda c: Cb.extract(c.data, True).data == Cb.Admin())
-async def admin_callback(callback: types.CallbackQuery, state: FSMContext, db: Database, settings: Settings) -> None:
+async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: MyBot, db: Database, settings: Settings) -> None:
     data = Cb.extract(cd=callback.data)
     if data.data == Cb.Admin.ross():
         await state.set_state(Newsletter.message)
@@ -52,14 +52,17 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, db: D
         await callback.message.edit_reply_markup(reply_markup=keyboards.inline.admin_list(ls=pag))
 
     elif data.data == Cb.Admin.com_sub():
+        await callback.message.delete()
         list_chats = await db.com_sub_chats.select_many()
         pag = paginate(list_items=list_chats, items_per_page=5)
-        await callback.message.edit_reply_markup(reply_markup=keyboards.inline.com_chats(ls=pag))
+        await callback.message.answer(text="<b>Админ панель</b>: <i>Обязательная подписка</i>",
+                                      reply_markup=keyboards.inline.com_chats(ls=pag))
 
     elif data.data == Cb.Admin.add_com_chat():
         await callback.message.delete()
         await state.set_state(ComChatCreator.chat_id)
-        reply_markup = keyboards.inline.back(to=Cb.Admin.main())
+        bot_info = await bot.me()
+        reply_markup = keyboards.inline.add_com_chat(bot_username=bot_info.username)
         await callback.message.answer(texts.ADD_COM_CHAT, reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.remove_com_chat():
