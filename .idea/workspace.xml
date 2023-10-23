@@ -130,6 +130,7 @@
       <workItem from="1696174697713" duration="804000" />
       <workItem from="1696262609764" duration="6000" />
       <workItem from="1697769673912" duration="168000" />
+      <workItem from="1697849000899" duration="354000" />
     </task>
     <servers />
   </component>
@@ -160,7 +161,7 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/AiogramTemplate$app.coverage" NAME="app Coverage Results" MODIFIED="1695900542984" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/AiogramTemplate$app.coverage" NAME="app Coverage Results" MODIFIED="1697849292734" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/AiogramTemplate$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1695171252072" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
   </component>
 </project>

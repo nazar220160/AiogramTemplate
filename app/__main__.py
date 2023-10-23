@@ -18,7 +18,6 @@ from app.core import (
 
 async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
     register_middlewares(dp=dispatcher)
-    dispatcher.include_router(router)
     await set_bot_commands(bot=bot)
     await bot.delete_webhook(drop_pending_updates=True)
 
@@ -29,6 +28,8 @@ async def main() -> None:
     storage = load_storage(settings=settings)
     dp = load_dispatcher(storage=storage)
     polling_manager = PollingManager()
+
+    dp.include_router(router)
 
     dp.startup.register(on_startup)
     bot_info = await bot.me()
