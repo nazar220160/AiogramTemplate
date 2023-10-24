@@ -6,7 +6,7 @@ from app.core.settings import Settings
 from app.utils import texts
 from app import keyboards
 from app.database.core import Database
-from app.database.dto import UserCreate, QuestionCreate
+from app.database.dto import QuestionCreate
 from app.common.states.main import Support
 
 from app.utils.callback import CallbackData as Cb
@@ -14,15 +14,8 @@ from app.routers.client.router import client_router
 
 
 @client_router.message(CommandStart())
-async def start(message: types.Message, state: FSMContext, db: Database):
-    user_info = await db.user.select(user_id=message.from_user.id)
-    if not user_info:
-        await db.user.create(query=UserCreate(
-            user_id=message.from_user.id,
-            **message.from_user.model_dump(exclude_none=False, exclude='id')
-        ))
+async def start(message: types.Message, state: FSMContext):
     await state.clear()
-
     reply_markup = keyboards.inline.start()
     await message.answer(text=texts.main.START,
                          reply_markup=reply_markup)
