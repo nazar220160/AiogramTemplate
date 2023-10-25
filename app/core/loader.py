@@ -27,6 +27,4 @@ def load_dispatcher(
 def load_bot(settings: Settings) -> Bot:
     return MyBot(
         token=settings.bot_token,
-        parse_mode=settings.parse_mode,
-        disable_web_page_preview=settings.disable_web_page_preview,
     )
