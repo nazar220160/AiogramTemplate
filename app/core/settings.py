@@ -29,9 +29,7 @@ class Settings(BaseSettings):
     database_port: Optional[int] = None
     database_user: Optional[str] = None
     database_pass: Optional[str] = None
-    admins: Optional[List[int]] = []
-    parse_mode: Union[ParseMode, str] = ParseMode.HTML
-    disable_web_page_preview: Optional[bool] = True
+    admins: List[int] = []
     redis_settings: Dict[str, Any] = {}
 
     @property
