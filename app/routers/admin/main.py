@@ -16,7 +16,7 @@ from app.core.settings import Settings
 from app.database.core import Database
 from app.database.dto import UserDTO, UserUpdate, QuestionUpdate, ComSubChatsCreate, ComSubChatsUpdate
 from app.routers.admin.router import admin_router
-from app.utils import texts
+from app.utils.texts import admin as texts
 from app.utils.callback import CallbackData as Cb
 from app.utils.other import paginate
 
@@ -24,23 +24,24 @@ from app.utils.other import paginate
 @admin_router.message(Command('admin'), IsAdmin())
 async def start(message: types.Message, db: Database):
     all_users = await db.user.select_many()
-    await message.answer(texts.admin.start(len_users=len(all_users)),
+    await message.answer(texts.START.format(len_users=len(all_users)),
                          reply_markup=keyboards.inline.admin())
 
 
 @admin_router.callback_query(lambda c: Cb.extract(c.data, True).data == Cb.Admin())
-async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: MyBot, db: Database, settings: Settings) -> None:
+async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: MyBot, db: Database,
+                         settings: Settings) -> None:
     data = Cb.extract(cd=callback.data)
     if data.data == Cb.Admin.ross():
         await state.set_state(Newsletter.message)
         await state.set_data({'message_id': callback.message.message_id})
-        await callback.message.edit_text("<b>Отправьте сообщение для рассылки</b>",
+        await callback.message.edit_text(texts.ENTER_MESSAGE_FOR_ROSS,
                                          reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
     elif data.data == Cb.Admin.main():
         await state.clear()
         await callback.message.delete()
         all_users = await db.user.select_many()
-        await callback.message.answer(texts.admin.start(len_users=len(all_users)),
+        await callback.message.answer(texts.START.format(len_users=len(all_users)),
                                       reply_markup=keyboards.inline.admin())
     elif data.data == Cb.Admin.confirm_ross():
         list_users = await db.user.select_many()
@@ -55,7 +56,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         await callback.message.delete()
         list_chats = await db.com_sub_chats.select_many()
         pag = paginate(list_items=list_chats, items_per_page=5)
-        await callback.message.answer(text="<b>Админ панель</b>: <i>Обязательная подписка</i>",
+        await callback.message.answer(text=texts.ADMIN_PANEL_COM_SUB,
                                       reply_markup=keyboards.inline.com_chats(ls=pag))
 
     elif data.data == Cb.Admin.add_com_chat():
@@ -96,7 +97,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
 
     elif data.data == Cb.Admin.remove_admin():
         if callback.from_user.id not in settings.admins:
-            await callback.answer(text="Недостаточно прав!", show_alert=True)
+            await callback.answer(text=texts.INSUFFICIENT_PERMISSIONS, show_alert=True)
             return
 
         await db.user.update(user_id=int(data.args[0]), query=UserUpdate(admin=False))
@@ -123,17 +124,18 @@ async def ross(message: types.Message, user_id: int, list_users: List[UserDTO]):
             continue
         try:
             await message.copy_to(chat_id=i.user_id)
-            file_text += bytes(f"{i.user_id}: Успешно!\n", 'utf-8')
+            file_text += bytes(f"{i.user_id}: {texts.SUCCESSFUL}\n", 'utf-8')
             good += 1
         except Exception as e:
             errors.append(e)
-            file_text += bytes(f"{i.user_id}: Ошибка! - {e}\n", 'utf-8')
+            file_text += bytes(f"{i.user_id}: {texts.ERROR} - {e}\n", 'utf-8')
     text_file = aiogram.types.input_file.BufferedInputFile(file_text,
-                                                           filename=f"Рассылка сообщений {datetime.now().date()}.txt")
+                                                           filename=texts.ROSS_FILE_NAME.format(date=datetime.now().date()))
 
     await message.edit_reply_markup()
+
     await message.reply_document(document=text_file,
-                                 caption=f'<b>Завершено. Успешно: {good}. Неудач: {len(errors)}</b>',
+                                 caption=texts.ROSS_DONE.format(good=good, errors=len(errors)),
                                  reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
 
 
@@ -150,16 +152,15 @@ async def get_ross_message(message: types.Message, state: FSMContext, bot: MyBot
 async def add_admin(message: types.Message, db: Database):
     message_args = message.text.split()
     if len(message_args) < 2:
-        await message.answer("Для отправки монет пользователя введите команду:\n"
-                             "/send_money ID сумма")
+        await message.answer(texts.FOR_SEND_MESSAGE_ENTER_COMMAND)
 
     else:
         try:
             user_id = int(message_args[1])
             await db.user.update(user_id=user_id, query=UserUpdate(admin=True))
-            await message.answer(f"Успешно")
+            await message.answer(texts.SUCCESSFUL)
         except ValueError:
-            await message.answer("ID должен состоять только из цифр")
+            await message.answer(texts.MUST_BE_INTEGER)
 
 
 @admin_router.message(F.reply_to_message, IsAdmin())
@@ -168,23 +169,23 @@ async def answer_the_question(message: types.Message, db: Database):
 
     database_message = await db.question.select(admin_message_id=message_id)
     if database_message is None:
-        await message.reply("Не найдено сообщение для ответа!")
+        await message.reply(texts.MESSAGE_NOT_FOUND)
         return
     if database_message.answered is True:
-        await message.reply("Сообщение уже отвечено!")
+        await message.reply(texts.MESSAGE_ALREADY_ANSWERED)
         return
     try:
         await message.send_copy(chat_id=message.reply_to_message.forward_from.id,
                                 reply_to_message_id=database_message.user_message_id)
     except TelegramBadRequest:
-        await message.reply("Пользователь удалил сообщение либо заблокировал бота!")
+        await message.reply(texts.USER_BLOCKED_BOT_OR_DELETE_MESSAGE)
         return
     except AttributeError:
-        await message.reply("Ошибка!")
+        await message.reply(texts.ERROR)
         return
 
     await db.question.update(admin_message_id=message_id, query=QuestionUpdate(answered=True))
-    await message.reply("Ответ отправлен!")
+    await message.reply(texts.REPLY_SEND)
 
 
 @admin_router.message(ComChatCreator.chat_id, IsAdmin())
@@ -194,38 +195,32 @@ async def get_com_chat(message: types.Message, bot: MyBot, db: Database, state: 
         try:
             chat_id = int(message.text)
         except ValueError:
-            await message.answer("ID чата должен состоять только из цифр!",
-                                 reply_markup=back_kb)
+            await message.answer(texts.MUST_BE_INTEGER, reply_markup=back_kb)
             return
     elif message.forward_from:
-        await message.answer("Сообщение должно быть переслано из канала!",
-                             reply_markup=back_kb)
+        await message.answer(texts.MESSAGE_MUST_BE_FORWARD_FROM_CHANNEL, reply_markup=back_kb)
         return
     elif message.forward_from_chat:
         chat_id = message.forward_from_chat.id
     else:
-        await message.answer("Неизвестная ошибка!",
-                             reply_markup=back_kb)
+        await message.answer(texts.UNKNOWN_ERROR, reply_markup=back_kb)
         return
 
     try:
         bot_info = await bot.me()
         chat_info = await bot.get_chat(chat_id=chat_id)
         if chat_info.username is None:
-            await message.answer("Чат обязательно должен быть публичный",
-                                 reply_markup=back_kb)
+            await message.answer(texts.GET_COM_CHAT_MUST_BE_PUBLIC, reply_markup=back_kb)
             return
 
         chat_db = await db.com_sub_chats.select(chat_id=chat_info.id)
         if chat_db is not None:
-            await message.answer("Этот чат уже есть в обязательной подписке!",
-                                 reply_markup=back_kb)
+            await message.answer(texts.GET_COM_CHAT_ALREADY_IN_DB, reply_markup=back_kb)
             return
 
         bot_in_chat = await bot.get_chat_member(user_id=bot_info.id, chat_id=chat_id)
         if bot_in_chat.status != ChatMemberStatus.ADMINISTRATOR:
-            await message.answer("Чтобы добавить канал в ОП бот должен быть администратором канала!",
-                                 reply_markup=back_kb)
+            await message.answer(texts.GET_COM_CHAT_NOT_ADMIN, reply_markup=back_kb)
             return
 
         await db.com_sub_chats.create(query=ComSubChatsCreate(
@@ -238,12 +233,11 @@ async def get_com_chat(message: types.Message, bot: MyBot, db: Database, state: 
         list_chats = await db.com_sub_chats.select_many()
         pag = paginate(list_items=list_chats, items_per_page=5)
         all_users = await db.user.select_many()
-        await message.answer(text=texts.admin.start(len_users=len(all_users)),
+        await message.answer(text=texts.START.format(len_users=len(all_users)),
                              reply_markup=keyboards.inline.com_chats(ls=pag))
 
     except TelegramBadRequest:
-        text = "Чат не найден. Сначала добавьте бота в админы чата и повторите попытку!"
-        await message.answer(text=text, reply_markup=back_kb)
+        await message.answer(text=texts.GET_COM_CHAT_NOT_FOUND, reply_markup=back_kb)
         return
 
 

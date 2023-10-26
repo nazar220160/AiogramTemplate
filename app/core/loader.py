@@ -1,6 +1,7 @@
 from typing import Optional
 
 from aiogram import Dispatcher, Bot
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.base import BaseStorage
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -27,4 +28,5 @@ def load_dispatcher(
 def load_bot(settings: Settings) -> Bot:
     return MyBot(
         token=settings.bot_token,
+        parse_mode=ParseMode.HTML
     )
