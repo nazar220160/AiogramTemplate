@@ -116,7 +116,7 @@ Directory structure
 -------------------
 
 ```
-src/
+app/
     common/
         filters/      there is your filters
         keyboards/    there is your keyboards
