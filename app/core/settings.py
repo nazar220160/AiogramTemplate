@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from aiogram.enums.parse_mode import ParseMode
 
 import os
 from functools import lru_cache
