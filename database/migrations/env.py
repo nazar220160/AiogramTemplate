@@ -8,12 +8,12 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncConnection
 
 from database.models import Base
-from app.core import load_settings
+from app.core import load_global_settings
 
 target_metadata = Base.metadata
 
 config = context.config
-config.set_main_option('sqlalchemy.url', load_settings().db_url)
+config.set_main_option('sqlalchemy.url', load_global_settings().db_url)
 
 fileConfig(config.config_file_name)
 

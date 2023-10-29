@@ -74,20 +74,14 @@ python3 -m app
 
 # Docker
 
-### Unix:
-
-```sh
-make docker_build
-```
-
 ### Add migrations:
 
 ```sh
-docker-compose run --rm migrate
+docker-compose run app alembic revision --autogenerate
 ```
 
 ```sh
-make docker_up
+docker-compose run app alembic upgrade head
 ```
 
 ## Windows:
@@ -98,19 +92,7 @@ docker-compose build && docker-compose run --rm migrate && docker-compose up -d
 
 ## Env file
 
-* First of all rename your `.env_example` to `.env`
-
-```
-BOT_TOKEN=TOKEN
-DATABASE_URI=postgresql+asyncpg://{}:{}@{}:{}/{}
-DATABASE_NAME=postgres
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_USER=postgres
-DATABASE_PASS=postgres
-ADMINS=[]
-REDIS_SETTINGS={"host": "redis", "port": 6379}
-```
+* First of all rename your `.env_example` to `.env` and `app/.env_example` to `app/.env`
 
 Directory structure
 -------------------

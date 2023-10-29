@@ -5,6 +5,6 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
     pip install --upgrade pip
 COPY . .
-WORKDIR /usr/src/project/
+WORKDIR /usr/src/project/app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
