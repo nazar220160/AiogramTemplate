@@ -4,7 +4,7 @@ from aiogram.filters import Filter
 from aiogram import types
 
 from app.core import load_settings
-from app.database.core import Database
+from database.core import Database
 from app.utils import is_admin
 
 

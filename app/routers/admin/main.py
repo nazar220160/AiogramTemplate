@@ -13,8 +13,8 @@ from app.common.filters import IsAdmin
 from app.common.states.admin import Newsletter, ComChatCreator
 from app.core.models import MyBot
 from app.core.settings import Settings
-from app.database.core import Database
-from app.database.dto import UserDTO, UserUpdate, QuestionUpdate, ComSubChatsCreate, ComSubChatsUpdate
+from database.core import Database
+from database.dto import UserDTO, UserUpdate, QuestionUpdate, ComSubChatsCreate, ComSubChatsUpdate
 from app.routers.admin.router import admin_router
 from app.utils.texts import admin as texts
 from app.utils.callback import CallbackData as Cb

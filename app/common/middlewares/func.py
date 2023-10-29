@@ -12,7 +12,7 @@ from aiogram.types import User, Message, CallbackQuery
 from app import keyboards
 from app.core.models import MyBot
 from app.core.settings import Settings
-from app.database.core import Database
+from database.core import Database
 from app.utils.other import check_com_sub
 
 

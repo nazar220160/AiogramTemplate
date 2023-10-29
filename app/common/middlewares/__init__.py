@@ -6,10 +6,11 @@ from app.common.middlewares.add_user import AddUserMiddleware
 from app.common.middlewares.database import DatabaseMiddleware
 from app.common.middlewares.func import ComSubMiddleware
 from app.common.middlewares.i18n import simple_locale_middleware
+from app.core import load_global_settings
 
 
 def register_middlewares(dp: Dispatcher, engine: Optional[AsyncEngine] = None) -> None:
-    db_middleware = DatabaseMiddleware(engine)
+    db_middleware = DatabaseMiddleware(db_url=load_global_settings().db_url, engine=engine)
     com_sub_middleware = ComSubMiddleware()
     add_user_middleware = AddUserMiddleware()
 

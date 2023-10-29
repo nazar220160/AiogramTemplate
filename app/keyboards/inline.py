@@ -1,8 +1,8 @@
 from typing import List
 
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from app.database.dto.user import UserDTO
-from app.database.dto.settings import ComSubChatsDTO
+from database.dto import UserDTO
+from database.dto.settings import ComSubChatsDTO
 from app.utils.callback import CallbackData as Cd
 from app.utils.other import get_next_pag
 

@@ -4,15 +4,15 @@ from typing import (
     List,
 )
 
-from app.database.converters import convert_user_model_to_dto
-from app.database.dto import (
+from database.converters import convert_user_model_to_dto
+from database.dto import (
     UserCreate,
     UserDTO,
     UserUpdate,
 )
-from app.database.interfaces.repositories.base import Repository
-from app.database.models.user import User
-from app.database.repositories.base import BaseRepository
+from database.interfaces.repositories.base import Repository
+from database.models.user import User
+from database.repositories.base import BaseRepository
 
 
 class UserRepository(

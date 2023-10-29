@@ -4,10 +4,10 @@ from typing import Optional, Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.core.unit_of_work import UnitOfWork
-from app.database.core.connection import async_session
-from app.database.core.mediator import build_mediator
-from app.database.repositories import (
+from database.core.unit_of_work import UnitOfWork
+from database.core.connection import async_session
+from database.core.mediator import build_mediator
+from database.repositories import (
     UserRepository,
     QuestionRepository,
     ComSubChatsRepository,
@@ -16,9 +16,9 @@ from app.database.repositories import (
 
 class Database:
 
-    def __init__(self, session: Optional[AsyncSession] = None) -> None:
+    def __init__(self, db_url: str, session: Optional[AsyncSession] = None) -> None:
         if session is None:
-            session = async_session()
+            session = async_session(db_url=db_url)
         self._uow = UnitOfWork(session)
         self._mediator = build_mediator(session)
 

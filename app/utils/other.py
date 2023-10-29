@@ -5,7 +5,7 @@ from aiogram import Bot, types
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import ChatMemberLeft
 
-from app.database.dto import ComSubChatsDTO
+from database.dto import ComSubChatsDTO
 
 
 class AutoExpireList:

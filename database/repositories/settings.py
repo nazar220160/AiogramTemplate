@@ -4,15 +4,15 @@ from typing import (
     List,
 )
 
-from app.database.converters import convert_com_sub_chats_model_to_dto
-from app.database.dto import (
+from database.converters import convert_com_sub_chats_model_to_dto
+from database.dto import (
     ComSubChatsCreate,
     ComSubChatsDTO,
     ComSubChatsUpdate,
 )
-from app.database.interfaces.repositories.base import Repository
-from app.database.models import ComSubChats
-from app.database.repositories.base import BaseRepository
+from database.interfaces.repositories.base import Repository
+from database.models import ComSubChats
+from database.repositories.base import BaseRepository
 
 
 class ComSubChatsRepository(

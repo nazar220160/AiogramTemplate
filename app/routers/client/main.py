@@ -5,8 +5,8 @@ from aiogram.fsm.context import FSMContext
 from app.core.settings import Settings
 from app.utils.texts import client as texts
 from app import keyboards
-from app.database.core import Database
-from app.database.dto import QuestionCreate
+from database.core import Database
+from database.dto import QuestionCreate
 from app.common.states.main import Support
 
 from app.utils.callback import CallbackData as Cb

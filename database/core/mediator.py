@@ -2,8 +2,8 @@ from typing import Any, Optional, Dict
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.repositories.base import BaseRepository
-from app.database.repositories import REPOSITORIES
+from database.repositories.base import BaseRepository
+from database.repositories import REPOSITORIES
 
 
 class Mediator:

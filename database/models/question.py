@@ -5,7 +5,7 @@ from sqlalchemy import (
     BigInteger,
 )
 
-from app.database.models.base import ModelWithID, Base
+from database.models.base import ModelWithID, Base
 
 
 class Question(Base, ModelWithID):

@@ -1,9 +1,9 @@
-from app.database.models.user import User
-from app.database.models.question import Question
-from app.database.models.settings import ComSubChats
-from app.database.dto.user import UserDTO
-from app.database.dto.question import QuestionDTO
-from app.database.dto.settings import ComSubChatsDTO
+from database.models.user import User
+from database.models.question import Question
+from database.models.settings import ComSubChats
+from database.dto.user import UserDTO
+from database.dto.question import QuestionDTO
+from database.dto.settings import ComSubChatsDTO
 
 
 def convert_user_model_to_dto(user: User) -> UserDTO:

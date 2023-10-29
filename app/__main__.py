@@ -13,6 +13,7 @@ from app.core import (
     load_dispatcher,
     load_storage,
     load_settings,
+    load_global_settings,
 )
 
 
@@ -23,9 +24,10 @@ async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
 
 
 async def main() -> None:
+    global_settings = load_global_settings()
     settings = load_settings()
     bot = load_bot(settings=settings)
-    storage = load_storage(settings=settings)
+    storage = load_storage(settings=global_settings)
     dp = load_dispatcher(storage=storage)
     polling_manager = PollingManager()
 

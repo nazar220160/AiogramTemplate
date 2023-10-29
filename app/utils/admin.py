@@ -1,5 +1,5 @@
 from typing import List
-from app.database.core import Database
+from database.core import Database
 
 
 async def is_admin(user_id: int, admins: List, db: Database) -> bool:

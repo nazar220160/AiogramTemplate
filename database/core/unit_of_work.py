@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.database.exceptions import CommitError, RollbackError
-from app.database.interfaces.unit_of_work import AbstractUnitOfWork
+from database.exceptions import CommitError, RollbackError
+from database.interfaces.unit_of_work import AbstractUnitOfWork
 
 
 class UnitOfWork(AbstractUnitOfWork):

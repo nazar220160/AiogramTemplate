@@ -22,9 +22,10 @@ dist-ssr
 *.sw?
 
 .env
+app/.env
 venv.*
 venv/
-app/database/migrations/versions/*.py
+database/migrations/versions/*.py
 __pycache__
 .idea/
 

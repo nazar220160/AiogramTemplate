@@ -7,8 +7,8 @@ from typing import (
 
 from aiogram import BaseMiddleware
 from aiogram import types
-from app.database.core import Database
-from app.database.dto import UserCreate
+from database.core import Database
+from database.dto import UserCreate
 
 
 class AddUserMiddleware(BaseMiddleware):

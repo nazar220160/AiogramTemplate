@@ -3,7 +3,7 @@ from typing import Generic, Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.repositories.crud import CRUDRepository, Model
+from database.repositories.crud import CRUDRepository, Model
 
 
 class BaseRepository(abc.ABC, Generic[Model]):

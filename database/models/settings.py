@@ -8,7 +8,7 @@ from sqlalchemy import (
     Boolean
 )
 
-from app.database.models.base import Base
+from database.models.base import Base
 
 
 class ComSubChats(Base):

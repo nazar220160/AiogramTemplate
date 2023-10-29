@@ -19,8 +19,8 @@ from sqlalchemy import (
     ColumnElement
 )
 
-from app.database.interfaces.repositories.crud import AbstractCRUDRepository
-from app.database.models.base import Base
+from database.interfaces.repositories.crud import AbstractCRUDRepository
+from database.models.base import Base
 
 Model = TypeVar('Model', bound=Base)
 
