@@ -109,17 +109,17 @@ app/
         loader.py     here is your bot configurations
         settings.py   your settings for whole app
         models.py     your models for whole app
-    database/
-        core/         here is your connection or main class
-        dto/          here is yours data structures for database
-        interfaces/   your interfaces for database
-        migrations/   your db stages and versions
-        models/       your db models
-        repositories/ your repo for work with db models and queries
     keyboards/
         inline.py     your inline keyboards funcs
     routers/          your handlers/routers to interact with users
     services/         your business-logic
     utils/            your utils for whole app
     __main__.py       entry point
+database/
+    core/         here is your connection or main class
+    dto/          here is yours data structures for database
+    interfaces/   your interfaces for database
+    migrations/   your db stages and versions
+    models/       your db models
+    repositories/ your repo for work with db models and queries
 ```
