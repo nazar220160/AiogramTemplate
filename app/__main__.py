@@ -17,8 +17,7 @@ from app.core import (
 )
 
 
-async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
-    register_middlewares(dp=dispatcher)
+async def on_startup(bot: Bot) -> None:
     await set_bot_commands(bot=bot)
     await bot.delete_webhook(drop_pending_updates=True)
 
@@ -31,9 +30,11 @@ async def main() -> None:
     dp = load_dispatcher(storage=storage)
     polling_manager = PollingManager()
 
+    await on_startup(bot=bot)
+
+    register_middlewares(dp=dp)
     dp.include_router(router)
 
-    dp.startup.register(on_startup)
     bot_info = await bot.me()
     print(f'Hi {bot_info.username}. Bot started OK!\n «««  {datetime.now().replace(microsecond=0)}  »»»')
     await dp.start_polling(

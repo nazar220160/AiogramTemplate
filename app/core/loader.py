@@ -7,11 +7,13 @@ from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.core.models import MyBot
-from app.core.settings import Settings
+from app.core.settings import GlobalSettings, Settings
 import redis.asyncio as aioredis
 
 
-def load_storage(settings: Settings) -> BaseStorage:
+def load_storage(settings: GlobalSettings) -> BaseStorage:
+    if not settings.redis_settings:
+        return MemoryStorage()
     try:
         storage = RedisStorage(redis=aioredis.Redis(**settings.redis_settings))
     except ImportError:
