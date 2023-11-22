@@ -50,7 +50,7 @@ class Settings(BaseSettings):
 
     @staticmethod
     def root_dir() -> Path:
-        return Path(__file__).resolve().parent.parent.parent
+        return Path(__file__).resolve().parent.parent.parent.parent
 
     @classmethod
     def path(
