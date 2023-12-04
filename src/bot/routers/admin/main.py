@@ -9,7 +9,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.bot import keyboards
 from src.bot.common.filters import IsAdmin
-from src.bot.common.states.admin import Newsletter, ComChatCreator
+from src.bot.common.states.admin import Newsletter, ComChatCreator, BanUser
 from src.bot.core.models import MyBot
 from src.config.settings import Settings
 from src.database.core import Database
@@ -113,6 +113,58 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         pag = paginate(list_items=list_admins, items_per_page=5)
         reply_markup = keyboards.inline.admin_list(pag, page_num=page_num)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
+
+    elif data.data == Cb.Admin.banned_users():
+        list_banned_users = await db.user.get_blocked_users()
+        pag = paginate(list_items=list_banned_users, items_per_page=5)
+        await callback.message.delete()
+        await callback.message.answer(
+            text=texts.BANNED_USERS,
+            reply_markup=keyboards.inline.banned_users(ls=pag)
+        )
+
+    elif data.data == Cb.Admin.move_banned_users():
+        page_num = int(data.args[0])
+        list_banned_users = await db.user.get_blocked_users()
+        pag = paginate(list_items=list_banned_users, items_per_page=5)
+        reply_markup = keyboards.inline.banned_users(ls=pag, page_num=page_num)
+        await callback.message.edit_reply_markup(reply_markup=reply_markup)
+
+    elif data.data == Cb.Admin.unban():
+        user_id = int(data.args[0])
+
+        await db.user.update(user_id=user_id, query=UserUpdate(
+            blocked=False
+        ))
+
+        list_banned_users = await db.user.get_blocked_users()
+        pag = paginate(list_items=list_banned_users, items_per_page=5)
+        reply_markup = keyboards.inline.banned_users(ls=pag)
+        await callback.message.edit_reply_markup(reply_markup=reply_markup)
+        await callback.answer(text=texts.SUCCESSFUL)
+
+    elif data.data == Cb.Admin.ban():
+        await callback.message.delete()
+        await callback.message.answer(
+            text=texts.SEND_USER_ID_TO_BAN,
+            reply_markup=keyboards.inline.back(to=Cb.Admin.main(), cancel=True)
+        )
+        await state.set_state(BanUser.user_id)
+
+
+@admin_router.message(F.text, BanUser.user_id, IsAdmin())
+async def get_user_id_ban_user(message: types.Message, db: Database, state: FSMContext):
+    check_user = await db.user.select(user_id=message.text)
+    if not check_user:
+        await message.reply(texts.USER_NOT_FOUND, reply_markup=keyboards.inline.back(to=Cb.Admin.main(), cancel=True))
+        return
+
+    await db.user.update(user_id=message.text, query=UserUpdate(
+        blocked=True
+    ))
+    await message.reply(text=texts.BAN_USER_SUCCESSFUL.format(check_user.first_name),
+                        reply_markup=keyboards.inline.back(to=Cb.Admin.main(), main_menu=True))
+    await state.clear()
 
 
 async def ross(message: types.Message, user_id: int, list_users: List[UserDTO]):

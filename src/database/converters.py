@@ -17,6 +17,7 @@ def convert_user_model_to_dto(model: User) -> UserDTO:
         last_name=model.last_name,
         language_code=model.language_code,
         is_premium=model.is_premium,
+        blocked=model.blocked,
         admin=model.admin,
 
         questions=questions,

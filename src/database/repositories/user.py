@@ -54,6 +54,17 @@ class UserRepository(
         )
         return [convert_user_model_to_dto(model) for model in result]
 
+    async def get_blocked_users(
+            self,
+            offset: Optional[int] = None,
+            limit: Optional[int] = None,
+    ) -> List[UserDTO]:
+        result = await self._crud.select_many(
+            self.model.blocked,
+            offset=offset, limit=limit
+        )
+        return [convert_user_model_to_dto(model) for model in result]
+
     async def update(
             self, user_id: int, query: UserUpdate, exclude_none: bool = True
     ) -> List[UserDTO]:

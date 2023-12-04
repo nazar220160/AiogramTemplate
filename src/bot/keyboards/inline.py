@@ -18,6 +18,7 @@ def admin():
     result.row(InlineKeyboardButton(text=f"📢 {texts.NEWSLETTER}", callback_data=Cd.Admin.ross()))
     result.add(InlineKeyboardButton(text=f"👥 {texts.ADMINS}", callback_data=Cd.Admin.get_admins()))
     result.row(InlineKeyboardButton(text=f"💭 {texts.COM_SUB}", callback_data=Cd.Admin.com_sub()))
+    result.row(InlineKeyboardButton(text=f"🚫 {texts.BANNED_USERS}", callback_data=Cd.Admin.banned_users()))
     result.row(InlineKeyboardButton(text=f"🔙 {texts.BACK}", callback_data=Cd.Back.main_menu()))
     return result.as_markup()
 
@@ -102,4 +103,26 @@ def add_com_chat(bot_username: str):
     result.add(InlineKeyboardButton(text=f"➕ {texts.ADD_TO_GROUP}",
                                     url=url.format(username=bot_username, command='startgroup')))
     result.row(InlineKeyboardButton(text=f"🔙 {texts.BACK}", callback_data=Cd.Admin.com_sub()))
+    return result.as_markup()
+
+
+def banned_users(ls: list[list[UserDTO]], page_num=0):
+    result = InlineKeyboardBuilder()
+    len_ls = len(ls)
+    count = page_num if len_ls != 1 else 0
+    for i in ls[count]:
+        result.row(InlineKeyboardButton(text=i.full_name, callback_data='None'))
+        result.add(InlineKeyboardButton(text=f"✂️ {texts.UNBAN}", callback_data=Cd.Admin.unban(i.user_id)))
+    if len(ls) != 1:
+        move_back, move_next = get_next_pag(len_ls=len_ls, page_num=page_num)
+
+        callback_data_back = Cd.Admin.move_banned_users(move_back)
+        callback_data_next = Cd.Admin.move_banned_users(move_next)
+
+        result.row(InlineKeyboardButton(text=f"⬅", callback_data=callback_data_back))
+        result.add(InlineKeyboardButton(text=f"{page_num + 1}/{len_ls}", callback_data=f"None"))
+        result.add(InlineKeyboardButton(text=f"➡", callback_data=callback_data_next))
+
+    result.row(InlineKeyboardButton(text=f"➕ {texts.ADD}", callback_data=Cd.Admin.ban()))
+    result.add(InlineKeyboardButton(text=f"🔙 {texts.BACK}", callback_data=Cd.Admin.main()))
     return result.as_markup()

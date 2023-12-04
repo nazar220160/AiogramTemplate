@@ -17,6 +17,10 @@ class CallbackData:
         move_com_chats = _Inner()
         add_com_chat = _Inner()
         com_chat_toggle_turn = _Inner()
+        banned_users = _Inner()
+        unban = _Inner()
+        move_banned_users = _Inner()
+        ban = _Inner()
 
     class Back(metaclass=MetaInner):
         main_menu = _Inner()

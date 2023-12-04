@@ -25,6 +25,7 @@ class User(Base, ModelWithTime):
     last_name: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     language_code: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     is_premium: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    blocked: Mapped[bool] = mapped_column(Boolean, default=False)
     admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     questions: Mapped[List['Question']] = relationship(

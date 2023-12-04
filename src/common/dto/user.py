@@ -13,6 +13,7 @@ class UserCreate(BaseModel):
     last_name: Optional[str] = None
     language_code: Optional[str] = None
     is_premium: Optional[bool] = None
+    blocked: Optional[bool] = False
     admin: Optional[bool] = False
 
 
@@ -22,6 +23,7 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = None
     language_code: Optional[str] = None
     is_premium: Optional[bool] = None
+    blocked: Optional[bool] = None
     admin: Optional[bool] = None
 
 
@@ -32,6 +34,7 @@ class UserDTO(BaseModel):
     last_name: Optional[str] = None
     language_code: Optional[str] = None
     is_premium: Optional[bool] = None
+    blocked: bool
     admin: bool
 
     questions: List['QuestionDTO']
