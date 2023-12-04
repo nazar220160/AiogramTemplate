@@ -6,7 +6,6 @@ from aiogram import Bot, Dispatcher
 from src.bot.common.middlewares import register_middlewares
 from src.bot.utils.other import set_bot_commands
 from src.bot.routers import router
-from src.bot.utils.polling_manager import PollingManager
 
 from src.bot.core import (
     load_bot,
