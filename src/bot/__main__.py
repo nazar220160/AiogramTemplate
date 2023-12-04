@@ -37,15 +37,13 @@ async def main() -> None:
     bot = load_bot(settings=settings)
     storage = load_storage(settings=settings)
     dp = load_dispatcher(storage=storage)
-    polling_manager = PollingManager()
 
     dp.include_router(router)
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 
     await dp.start_polling(
-        bot, settings=settings, polling_manager=polling_manager,
-        allowed_updates=dp.resolve_used_update_types()
+        bot, settings=settings, allowed_updates=dp.resolve_used_update_types()
     )
 
 
