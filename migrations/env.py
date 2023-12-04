@@ -7,8 +7,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncConnection
 
-from src.backend.database.models import Base
-from src.backend.config import load_settings
+from src.database.models import Base
+from src.config import load_settings
 
 target_metadata = Base.metadata
 

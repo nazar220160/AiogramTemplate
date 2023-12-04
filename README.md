@@ -93,33 +93,3 @@ docker-compose build && docker-compose run --rm migrate && docker-compose up -d
 ## Env file
 
 * First of all rename your `.env_example` to `.env` and `app/.env_example` to `app/.env`
-
-Directory structure
--------------------
-
-```
-app/
-    common/
-        filters/      there is your filters
-        keyboards/    there is your keyboards
-        locales/      there is your locales, like en/ru
-        middlewares/  there is your middlewares
-        states/       there is your states
-    core/
-        loader.py     here is your bot configurations
-        settings.py   your settings for whole app
-        models.py     your models for whole app
-    keyboards/
-        inline.py     your inline keyboards funcs
-    routers/          your handlers/routers to interact with users
-    services/         your business-logic
-    utils/            your utils for whole app
-    __main__.py       entry point
-database/
-    core/         here is your connection or main class
-    dto/          here is yours data structures for database
-    interfaces/   your interfaces for database
-    migrations/   your db stages and versions
-    models/       your db models
-    repositories/ your repo for work with db models and queries
-```
