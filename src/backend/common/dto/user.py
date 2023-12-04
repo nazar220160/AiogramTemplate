@@ -1,5 +1,9 @@
-from typing import Optional
+from datetime import datetime
+from typing import Optional, TYPE_CHECKING, List
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from src.backend.common.dto.question import QuestionDTO
 
 
 class UserCreate(BaseModel):
@@ -29,6 +33,11 @@ class UserDTO(BaseModel):
     language_code: Optional[str] = None
     is_premium: Optional[bool] = None
     admin: bool
+
+    questions: List['QuestionDTO']
+
+    created_at: datetime
+    updated_at: datetime
 
     @property
     def full_name(self) -> str:

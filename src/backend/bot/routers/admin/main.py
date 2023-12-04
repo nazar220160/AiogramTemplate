@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
 
-import aiogram.types
 from aiogram import types, F
 from aiogram.enums import ChatMemberStatus
 from aiogram.exceptions import TelegramBadRequest
@@ -19,6 +18,7 @@ from src.backend.bot.routers.admin.router import admin_router
 from src.backend.bot.utils.texts import admin as texts
 from src.backend.bot.utils.callback import CallbackData as Cb
 from src.backend.bot.utils.other import paginate
+from src.backend.utils.enums import Status
 
 
 @admin_router.message(Command('admin'), IsAdmin())
@@ -129,14 +129,15 @@ async def ross(message: types.Message, user_id: int, list_users: List[UserDTO]):
         except Exception as e:
             errors.append(e)
             file_text += bytes(f"{i.user_id}: {texts.ERROR} - {e}\n", 'utf-8')
-    text_file = aiogram.types.input_file.BufferedInputFile(file_text,
-                                                           filename=texts.ROSS_FILE_NAME.format(date=datetime.now().date()))
+    text_file = types.input_file.BufferedInputFile(file=file_text,
+                                                   filename=texts.ROSS_FILE_NAME.format(
+                                                       date=datetime.now().date()))
 
     await message.edit_reply_markup()
-
-    await message.reply_document(document=text_file,
-                                 caption=texts.ROSS_DONE.format(good=good, errors=len(errors)),
-                                 reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
+    if file_text:
+        await message.reply_document(document=text_file,
+                                     caption=texts.ROSS_DONE.format(good=good, errors=len(errors)),
+                                     reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
 
 
 @admin_router.message(Newsletter.message, IsAdmin())
@@ -171,7 +172,10 @@ async def answer_the_question(message: types.Message, db: Database):
     if database_message is None:
         await message.reply(texts.MESSAGE_NOT_FOUND)
         return
-    if database_message.answered is True:
+    if database_message.status == Status.SUCCESS:
+        await message.reply(texts.MESSAGE_ALREADY_ANSWERED)
+        return
+    elif database_message.status == Status.IN_PROGRESS:
         await message.reply(texts.MESSAGE_ALREADY_ANSWERED)
         return
     try:

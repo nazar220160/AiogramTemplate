@@ -6,28 +6,48 @@ from src.backend.common.dto.question import QuestionDTO
 from src.backend.common.dto.settings import ComSubChatsDTO
 
 
-def convert_user_model_to_dto(user: User) -> UserDTO:
+def convert_user_model_to_dto(model: User) -> UserDTO:
+    questions = []
+    if 'questions' in model.as_dict():
+        questions = [convert_question_model_to_dto(model) for model in model.questions]
+
     return UserDTO(
-        user_id=user.user_id,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        language_code=user.language_code,
-        is_premium=user.is_premium,
-        admin=user.admin
+        user_id=model.user_id,
+        first_name=model.first_name,
+        last_name=model.last_name,
+        language_code=model.language_code,
+        is_premium=model.is_premium,
+        admin=model.admin,
+
+        questions=questions,
+
+        created_at=model.created_at,
+        updated_at=model.updated_at
     )
 
 
-def convert_question_model_to_dto(question: Question) -> QuestionDTO:
+def convert_question_model_to_dto(model: Question) -> QuestionDTO:
+    user = None
+    if 'user' in model.as_dict():
+        user = convert_user_model_to_dto(model.user)
+
     return QuestionDTO(
-        user_message_id=question.user_message_id,
-        admin_message_id=question.admin_message_id,
-        answered=question.answered
+        id=model.id,
+        user_message_id=model.user_message_id,
+        admin_message_id=model.admin_message_id,
+        status=model.status,
+        user_id=model.user_id,
+
+        user=user,
+
+        created_at=model.created_at,
+        updated_at=model.updated_at
     )
 
 
-def convert_com_sub_chats_model_to_dto(com_sub_chats: ComSubChats) -> ComSubChatsDTO:
+def convert_com_sub_chats_model_to_dto(model: ComSubChats) -> ComSubChatsDTO:
     return ComSubChatsDTO(
-        chat_id=com_sub_chats.chat_id,
-        username=com_sub_chats.username,
-        turn=com_sub_chats.turn
+        chat_id=model.chat_id,
+        username=model.username,
+        turn=model.turn
     )

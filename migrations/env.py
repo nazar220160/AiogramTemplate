@@ -2,7 +2,7 @@ import asyncio
 from logging.config import fileConfig
 from typing import no_type_check
 
-import nest_asyncio # type: ignore
+import nest_asyncio  # type: ignore
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncConnection
@@ -12,10 +12,10 @@ from src.backend.config import load_settings
 
 target_metadata = Base.metadata
 
-config = context.config  
+config = context.config
 config.set_main_option('sqlalchemy.url', load_settings().db_url)
 
-fileConfig(config.config_file_name) # type: ignore
+fileConfig(config.config_file_name)  # type: ignore
 
 
 def run_migrations_offline() -> None:
@@ -43,8 +43,7 @@ def run_migrations_offline() -> None:
 
 
 @no_type_check
-def do_run_migrations(connection: AsyncConnection) -> None: 
-    
+def do_run_migrations(connection: AsyncConnection) -> None:
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
@@ -65,7 +64,7 @@ async def run_migrations_online() -> None:
     """
     connectable = AsyncEngine(
         engine_from_config(
-            config.get_section(config.config_ini_section), # type: ignore
+            config.get_section(config.config_ini_section),  # type: ignore
             prefix="sqlalchemy.",  # noqa
             poolclass=pool.NullPool,
             future=True,

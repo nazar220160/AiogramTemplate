@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, List, TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import (
     String,
@@ -9,6 +9,9 @@ from sqlalchemy import (
 )
 
 from src.backend.database.models.base import ModelWithTime, Base
+
+if TYPE_CHECKING:
+    from src.backend.database.models.question import Question
 
 
 class User(Base, ModelWithTime):
@@ -23,3 +26,8 @@ class User(Base, ModelWithTime):
     language_code: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     is_premium: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
     admin: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    questions: Mapped[List['Question']] = relationship(
+        'Question',
+        back_populates='user'
+    )

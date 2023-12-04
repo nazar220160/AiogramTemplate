@@ -35,6 +35,7 @@ async def get_support_message(message: types.Message, state: FSMContext,
     await state.clear()
     mes = await message.forward(chat_id=settings.admins[0])
     await db.question.create(query=QuestionCreate(
+        user_id=message.from_user.id,
         user_message_id=message.message_id,
         admin_message_id=mes.message_id
     ))

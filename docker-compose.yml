@@ -4,15 +4,16 @@ services:
   app:
     build:
       context: .
-      dockerfile: app/Dockerfile
+      dockerfile: src/backend/Dockerfile
     restart: always
-    container_name: app
     networks:
       - app-network
+    ports:
+      - '8080:8000'
     volumes:
       - ./:/usr/src/project/
     working_dir: /usr/src/project/
-    command: python -m app
+    command: sh -c "python -m src.backend.bot & python -m src.backend.api"
 
   postgres:
     image: postgres:latest
