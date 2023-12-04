@@ -25,7 +25,7 @@ from src.utils.enums import Status
 async def start(message: types.Message, db: Database):
     all_users = await db.user.select_many()
     await message.answer(texts.START.format(len_users=len(all_users)),
-                         reply_markup=keyboards.inline.admin())
+                         reply_markup=keyboards.admin())
 
 
 @admin_router.callback_query(lambda c: Cb.extract(c.data, True).data == Cb.Admin())
@@ -36,13 +36,13 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         await state.set_state(Newsletter.message)
         await state.set_data({'message_id': callback.message.message_id})
         await callback.message.edit_text(texts.ENTER_MESSAGE_FOR_ROSS,
-                                         reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
+                                         reply_markup=keyboards.back(to=Cb.Admin.main()))
     elif data.data == Cb.Admin.main():
         await state.clear()
         await callback.message.delete()
         all_users = await db.user.select_many()
         await callback.message.answer(texts.START.format(len_users=len(all_users)),
-                                      reply_markup=keyboards.inline.admin())
+                                      reply_markup=keyboards.admin())
     elif data.data == Cb.Admin.confirm_ross():
         list_users = await db.user.select_many()
         await ross(callback.message, user_id=callback.from_user.id, list_users=list_users)
@@ -50,34 +50,34 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
     elif data.data == Cb.Admin.get_admins():
         list_admins = await db.user.get_admins()
         pag = paginate(list_items=list_admins, items_per_page=5)
-        await callback.message.edit_reply_markup(reply_markup=keyboards.inline.admin_list(ls=pag))
+        await callback.message.edit_reply_markup(reply_markup=keyboards.admin_list(ls=pag))
 
     elif data.data == Cb.Admin.com_sub():
         await callback.message.delete()
         list_chats = await db.com_sub_chats.select_many()
         pag = paginate(list_items=list_chats, items_per_page=5)
         await callback.message.answer(text=texts.ADMIN_PANEL_COM_SUB,
-                                      reply_markup=keyboards.inline.com_chats(ls=pag))
+                                      reply_markup=keyboards.com_chats(ls=pag))
 
     elif data.data == Cb.Admin.add_com_chat():
         await callback.message.delete()
         await state.set_state(ComChatCreator.chat_id)
         bot_info = await bot.me()
-        reply_markup = keyboards.inline.add_com_chat(bot_username=bot_info.username)
+        reply_markup = keyboards.add_com_chat(bot_username=bot_info.username)
         await callback.message.answer(texts.ADD_COM_CHAT, reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.remove_com_chat():
         chat_id = int(data.args[0])
         list_chats = await db.com_sub_chats.delete(chat_id=chat_id)
         pag = paginate(list_items=list_chats, items_per_page=5)
-        await callback.message.edit_reply_markup(reply_markup=keyboards.inline.com_chats(ls=pag))
+        await callback.message.edit_reply_markup(reply_markup=keyboards.com_chats(ls=pag))
 
     elif data.data == Cb.Admin.move_com_chats():
         page_num = int(data.args[0])
         list_chats = await db.com_sub_chats.select_many()
 
         pag = paginate(list_items=list_chats, items_per_page=5)
-        reply_markup = keyboards.inline.com_chats(pag, page_num=page_num)
+        reply_markup = keyboards.com_chats(pag, page_num=page_num)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.com_chat_toggle_turn():
@@ -92,7 +92,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         )
 
         pag = paginate(list_items=list_chats, items_per_page=5)
-        reply_markup = keyboards.inline.com_chats(pag)
+        reply_markup = keyboards.com_chats(pag)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.remove_admin():
@@ -104,14 +104,14 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         list_admins = await db.user.get_admins()
 
         pag = paginate(list_items=list_admins, items_per_page=5)
-        await callback.message.edit_reply_markup(reply_markup=keyboards.inline.admin_list(ls=pag))
+        await callback.message.edit_reply_markup(reply_markup=keyboards.admin_list(ls=pag))
 
     elif data.data == Cb.Admin.move_admins():
         page_num = int(data.args[0])
         list_admins = await db.user.get_admins()
 
         pag = paginate(list_items=list_admins, items_per_page=5)
-        reply_markup = keyboards.inline.admin_list(pag, page_num=page_num)
+        reply_markup = keyboards.admin_list(pag, page_num=page_num)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.banned_users():
@@ -120,14 +120,14 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         await callback.message.delete()
         await callback.message.answer(
             text=texts.BANNED_USERS,
-            reply_markup=keyboards.inline.banned_users(ls=pag)
+            reply_markup=keyboards.banned_users(ls=pag)
         )
 
     elif data.data == Cb.Admin.move_banned_users():
         page_num = int(data.args[0])
         list_banned_users = await db.user.get_blocked_users()
         pag = paginate(list_items=list_banned_users, items_per_page=5)
-        reply_markup = keyboards.inline.banned_users(ls=pag, page_num=page_num)
+        reply_markup = keyboards.banned_users(ls=pag, page_num=page_num)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.unban():
@@ -139,7 +139,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
 
         list_banned_users = await db.user.get_blocked_users()
         pag = paginate(list_items=list_banned_users, items_per_page=5)
-        reply_markup = keyboards.inline.banned_users(ls=pag)
+        reply_markup = keyboards.banned_users(ls=pag)
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
         await callback.answer(text=texts.SUCCESSFUL)
 
@@ -147,7 +147,7 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
         await callback.message.delete()
         await callback.message.answer(
             text=texts.SEND_USER_ID_TO_BAN,
-            reply_markup=keyboards.inline.back(to=Cb.Admin.main(), cancel=True)
+            reply_markup=keyboards.back(to=Cb.Admin.main(), cancel=True)
         )
         await state.set_state(BanUser.user_id)
 
@@ -156,14 +156,14 @@ async def admin_callback(callback: types.CallbackQuery, state: FSMContext, bot: 
 async def get_user_id_ban_user(message: types.Message, db: Database, state: FSMContext):
     check_user = await db.user.select(user_id=message.text)
     if not check_user:
-        await message.reply(texts.USER_NOT_FOUND, reply_markup=keyboards.inline.back(to=Cb.Admin.main(), cancel=True))
+        await message.reply(texts.USER_NOT_FOUND, reply_markup=keyboards.back(to=Cb.Admin.main(), cancel=True))
         return
 
     await db.user.update(user_id=message.text, query=UserUpdate(
         blocked=True
     ))
     await message.reply(text=texts.BAN_USER_SUCCESSFUL.format(check_user.first_name),
-                        reply_markup=keyboards.inline.back(to=Cb.Admin.main(), main_menu=True))
+                        reply_markup=keyboards.back(to=Cb.Admin.main(), main_menu=True))
     await state.clear()
 
 
@@ -189,14 +189,14 @@ async def ross(message: types.Message, user_id: int, list_users: List[UserDTO]):
     if file_text:
         await message.reply_document(document=text_file,
                                      caption=texts.ROSS_DONE.format(good=good, errors=len(errors)),
-                                     reply_markup=keyboards.inline.back(to=Cb.Admin.main()))
+                                     reply_markup=keyboards.back(to=Cb.Admin.main()))
 
 
 @admin_router.message(Newsletter.message, IsAdmin())
 async def get_ross_message(message: types.Message, state: FSMContext, bot: MyBot):
     data = await state.get_data()
     await state.clear()
-    await message.copy_to(chat_id=message.from_user.id, reply_markup=keyboards.inline.confirm_ross())
+    await message.copy_to(chat_id=message.from_user.id, reply_markup=keyboards.confirm_ross())
     await message.delete()
     await bot.delete_message(chat_id=message.from_user.id, message_id=data['message_id'])
 
@@ -246,7 +246,7 @@ async def answer_the_question(message: types.Message, db: Database):
 
 @admin_router.message(ComChatCreator.chat_id, IsAdmin())
 async def get_com_chat(message: types.Message, bot: MyBot, db: Database, state: FSMContext):
-    back_kb = keyboards.inline.back(to=Cb.Admin.main())
+    back_kb = keyboards.back(to=Cb.Admin.main())
     if not message.forward_from_chat and not message.forward_from and message.text:
         try:
             chat_id = int(message.text)
@@ -290,7 +290,7 @@ async def get_com_chat(message: types.Message, bot: MyBot, db: Database, state: 
         pag = paginate(list_items=list_chats, items_per_page=5)
         all_users = await db.user.select_many()
         await message.answer(text=texts.START.format(len_users=len(all_users)),
-                             reply_markup=keyboards.inline.com_chats(ls=pag))
+                             reply_markup=keyboards.com_chats(ls=pag))
 
     except TelegramBadRequest:
         await message.answer(text=texts.GET_COM_CHAT_NOT_FOUND, reply_markup=back_kb)

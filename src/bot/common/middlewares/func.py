@@ -39,7 +39,7 @@ class ComSubMiddleware(BaseMiddleware):
             result = await handler(event, data)
             return result
         else:
-            reply_markup = keyboards.inline.subscribe_chats(chat_list=not_sub_list)
+            reply_markup = keyboards.subscribe_chats(chat_list=not_sub_list)
             if isinstance(event, Message):
                 await event.answer(text="<b>Чтобы пользоваться ботом нужно подписаться на чаты</b>",
                                    reply_markup=reply_markup)

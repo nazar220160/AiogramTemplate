@@ -1,3 +1,5 @@
+import random
+
 from aiogram import types
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
@@ -16,14 +18,14 @@ from src.bot.routers.client.router import client_router
 @client_router.message(CommandStart())
 async def start(message: types.Message, state: FSMContext):
     await state.clear()
-    await message.answer(text=texts.START, reply_markup=keyboards.inline.start())
+    await message.answer(text=texts.START, reply_markup=keyboards.start())
 
 
 @client_router.message(Command('support'))
 async def support(message: types.Message, state: FSMContext):
     await state.set_state(Support.message)
     await message.reply(text=texts.SUPPORT,
-                        reply_markup=keyboards.inline.back(
+                        reply_markup=keyboards.back(
                             to=Cb.Back.main_menu(),
                             main_menu=True
                         ))
@@ -33,7 +35,15 @@ async def support(message: types.Message, state: FSMContext):
 async def get_support_message(message: types.Message, state: FSMContext,
                               settings: Settings, db: Database):
     await state.clear()
-    mes = await message.forward(chat_id=settings.admins[0])
+
+    db_admins = [user.user_id for user in await db.user.get_admins()]
+    admins = db_admins + settings.admins
+
+    if not admins:
+        await message.reply(texts.ADMINS_NOT_FOUND)
+        return
+
+    mes = await message.forward(chat_id=random.choice(admins))
     await db.question.create(query=QuestionCreate(
         user_id=message.from_user.id,
         user_message_id=message.message_id,
@@ -49,6 +59,6 @@ async def back(callback: types.CallbackQuery, state: FSMContext):
         await state.clear()
         await callback.message.delete()
 
-        reply_markup = keyboards.inline.start()
+        reply_markup = keyboards.start()
 
         await callback.message.answer(texts.START, reply_markup=reply_markup)

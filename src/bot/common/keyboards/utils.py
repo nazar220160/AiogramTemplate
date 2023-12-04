@@ -11,7 +11,7 @@ from typing import (
 
 from aiogram import types
 
-from app.common.keyboards.inline import inline_keyboard, get_inline_button
+from src.bot.common.keyboards.inline import get_inline_button, inline_keyboard
 
 DEFAULT_STEP: Final[int] = 2
 
