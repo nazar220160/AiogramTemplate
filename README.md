@@ -33,11 +33,11 @@ Extract text/update/compile:
 ### Windows
 
 ```sh
-pybabel extract --input-dirs=app -o src/bot/common/locales/messages.pot
+pybabel extract --input-dirs=src -o src/bot/common/locales/messages.pot
 ```
 
 ```sh
-pybabel update -d app/common/locales -D messages -i src/bot/common/locales/messages.pot
+pybabel update -d src/bot/common/locales -D messages -i src/bot/common/locales/messages.pot
 ```
 
 ```sh
