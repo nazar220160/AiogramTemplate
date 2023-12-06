@@ -25,37 +25,23 @@ alembic revision --autogenerate -m 'initial' && alembic upgrade head
 #### To create locale, for example `en`:
 
 ```sh
-pybabel init -i app/common/locales/messages.pot -d app/common/locales -D messages -l en
+pybabel init -i src/bot/common/locales/messages.pot -d src/bot/common/locales -D messages -l en
 ```
 
 Extract text/update/compile:
 
-### Unix
-
-```sh
-make babel_extract
-```
-
-```sh
-make babel_update
-```
-
-```sh
-make babel_compile
-```
-
 ### Windows
 
 ```sh
-pybabel extract --input-dirs=app -o app/common/locales/messages.pot
+pybabel extract --input-dirs=app -o src/bot/common/locales/messages.pot
 ```
 
 ```sh
-pybabel update -d app/common/locales -D messages -i app/common/locales/messages.pot
+pybabel update -d app/common/locales -D messages -i src/bot/common/locales/messages.pot
 ```
 
 ```sh
-pybabel compile -d app/common/locales -D messages
+pybabel compile -d src/bot/common/locales -D messages
 ```
 
 ## Start app:
