@@ -13,18 +13,19 @@ from src.bot.common.states.main import Support
 
 from src.bot.utils.callback import CallbackData as Cb
 from src.bot.routers.client.router import client_router
+from src.bot.common.middlewares.i18n import gettext as _
 
 
 @client_router.message(CommandStart())
 async def start(message: types.Message, state: FSMContext):
     await state.clear()
-    await message.answer(text=texts.START, reply_markup=keyboards.start())
+    await message.answer(text=_(texts.START), reply_markup=keyboards.start())
 
 
 @client_router.message(Command('support'))
 async def support(message: types.Message, state: FSMContext):
     await state.set_state(Support.message)
-    await message.reply(text=texts.SUPPORT,
+    await message.reply(text=_(texts.SUPPORT),
                         reply_markup=keyboards.back(
                             to=Cb.Back.main_menu(),
                             main_menu=True
@@ -40,7 +41,7 @@ async def get_support_message(message: types.Message, state: FSMContext,
     admins = db_admins + settings.admins
 
     if not admins:
-        await message.reply(texts.ADMINS_NOT_FOUND)
+        await message.reply(_(texts.ADMINS_NOT_FOUND))
         return
 
     mes = await message.forward(chat_id=random.choice(admins))
@@ -49,7 +50,7 @@ async def get_support_message(message: types.Message, state: FSMContext,
         user_message_id=message.message_id,
         admin_message_id=mes.message_id
     ))
-    await message.reply(texts.SUPPORT_YOUR_MESSAGE_SEND_ADMIN)
+    await message.reply(_(texts.SUPPORT_YOUR_MESSAGE_SEND_ADMIN))
 
 
 @client_router.callback_query(lambda c: Cb.extract(c.data, True).data == Cb.Back())
@@ -61,4 +62,4 @@ async def back(callback: types.CallbackQuery, state: FSMContext):
 
         reply_markup = keyboards.start()
 
-        await callback.message.answer(texts.START, reply_markup=reply_markup)
+        await callback.message.answer(_(texts.START), reply_markup=reply_markup)

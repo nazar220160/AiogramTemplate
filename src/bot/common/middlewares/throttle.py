@@ -41,7 +41,7 @@ class ThrottlingMiddleware(BaseMiddleware):
             count = int(is_throttled.decode())
             if count == TRIGGER_VALUE:
                 await self._storage.redis.set(name=user, value=count + 1, ex=timeout)  # type: ignore
-                return await event.answer(texts.THROTTLED)  # type: ignore
+                return await event.answer(_(texts.THROTTLED))  # type: ignore
             elif count > TRIGGER_VALUE:
                 return
             else:

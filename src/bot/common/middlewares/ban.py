@@ -11,6 +11,7 @@ from aiogram import types
 from src.bot.utils import texts
 from src.config.settings import Settings
 from src.database.core import Database
+from src.bot.common.middlewares.i18n import gettext as _
 
 
 class BanMiddleware(BaseMiddleware):
@@ -32,6 +33,6 @@ class BanMiddleware(BaseMiddleware):
             return result
 
         if isinstance(event, types.Message):
-            await event.reply(text=texts.USER_BLOCKED)
+            await event.reply(text=_(texts.USER_BLOCKED))
         if isinstance(event, types.CallbackQuery):
-            await event.answer(text=texts.USER_BLOCKED_ALERT, show_alert=True)
+            await event.answer(text=_(texts.USER_BLOCKED_ALERT), show_alert=True)
