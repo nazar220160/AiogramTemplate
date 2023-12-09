@@ -3,7 +3,8 @@ WORKDIR /usr/src/project
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
-    pip install --upgrade pip
+    apt-get install -y sqlite3 libsqlite3-dev
+RUN pip install --upgrade pip
 COPY . .
 WORKDIR /usr/src/project/app
 COPY requirements.txt .
