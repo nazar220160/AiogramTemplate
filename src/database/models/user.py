@@ -1,7 +1,6 @@
 from typing import Optional, List, TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 from sqlalchemy import (
     String,
     Boolean,
