@@ -11,7 +11,7 @@ from src.bot.core import (
 )
 from src.bot.routers import router
 from src.bot.utils.other import set_bot_commands
-from src.config import load_settings
+from src.core.config import load_config
 from src.database.core.connection import create_sa_engine, create_sa_session_factory
 from src.utils.logger import Logger
 
@@ -36,12 +36,12 @@ async def on_shutdown(bot: Bot) -> None:
 
 
 async def main() -> None:
-    settings = load_settings()
-    bot = load_bot(settings=settings)
-    storage = load_storage(settings=settings)
+    config = load_config()
+    bot = load_bot(config=config)
+    storage = load_storage(config=config)
     dp = load_dispatcher(storage=storage)
 
-    engine = create_sa_engine(url=settings.db_url)
+    engine = create_sa_engine(url=config.db.url)
     session_factory = create_sa_session_factory(engine)
 
     dp.include_router(router)
@@ -51,9 +51,7 @@ async def main() -> None:
     register_middlewares(dp=dp, session_factory=session_factory)
 
     await dp.start_polling(
-        bot,
-        settings=settings,
-        allowed_updates=dp.resolve_used_update_types()
+        bot, config=config, allowed_updates=dp.resolve_used_update_types()
     )
 
 

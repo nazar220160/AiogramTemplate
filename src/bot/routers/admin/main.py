@@ -16,7 +16,7 @@ from src.bot.utils.callback import CallbackData as Cb
 from src.bot.utils.other import paginate
 from src.bot.utils.texts import admin as texts
 from src.common.dto import BotChatsUpdate, QuestionUpdate, UserUpdate
-from src.config.settings import Settings
+from src.core.config import Config
 from src.database.core.gateway import DatabaseGateway
 from src.database.models.user import User
 from src.utils.enums import Status
@@ -36,7 +36,7 @@ async def admin_callback(
     state: FSMContext,
     bot: MyBot,
     db: DatabaseGateway,
-    settings: Settings,
+    config: Config,
 ) -> None:
     data = Cb.extract(cd=callback.data)
     if data.data == Cb.Admin.ross():
@@ -111,7 +111,7 @@ async def admin_callback(
         await callback.message.edit_reply_markup(reply_markup=reply_markup)
 
     elif data.data == Cb.Admin.remove_admin():
-        if callback.from_user.id not in settings.admins:
+        if callback.from_user.id not in config.bot.admins:
             await callback.answer(
                 text=_(texts.INSUFFICIENT_PERMISSIONS), show_alert=True
             )

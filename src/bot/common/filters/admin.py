@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.filters import Filter
 
 from src.bot.utils import is_admin
-from src.config.settings import load_settings
+from src.core.config import load_config
 from src.database.core.gateway import DatabaseGateway
 
 
@@ -12,7 +12,7 @@ class IsAdmin(Filter):
 
     def __init__(self, admins: Optional[List[int]] = None) -> None:
         if admins is None:
-            admins = load_settings().admins
+            admins = load_config().bot.admins
         self.admins = admins or []
 
     async def __call__(

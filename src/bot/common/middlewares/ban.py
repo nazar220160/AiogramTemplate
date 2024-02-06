@@ -9,7 +9,7 @@ from aiogram import BaseMiddleware
 from aiogram import types
 
 from src.bot.utils import texts
-from src.config.settings import Settings
+from src.core.config import Config
 from src.database.core.gateway import DatabaseGateway
 from src.bot.common.middlewares.i18n import gettext as _
 
@@ -22,8 +22,8 @@ class BanMiddleware(BaseMiddleware):
             event: Union[types.Message, types.CallbackQuery],
             data: Dict[str, Any],
     ) -> Any:
-        settings: Settings = data['settings']
-        if event.from_user.id in settings.admins:
+        config: Config = data["config"]
+        if event.from_user.id in config.bot.admins:
             result = await handler(event, data)
             return result
         db: DatabaseGateway = data["db"]

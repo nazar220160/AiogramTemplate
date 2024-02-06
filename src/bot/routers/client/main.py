@@ -11,7 +11,7 @@ from src.bot.routers.client.router import client_router
 from src.bot.utils.callback import CallbackData as Cb
 from src.bot.utils.texts import client as texts
 from src.common.dto import QuestionCreate
-from src.config.settings import Settings
+from src.core.config import Config
 from src.database.core.gateway import DatabaseGateway
 
 
@@ -32,12 +32,12 @@ async def support(message: types.Message, state: FSMContext):
 
 @client_router.message(Support.message)
 async def get_support_message(
-    message: types.Message, state: FSMContext, settings: Settings, db: DatabaseGateway
+    message: types.Message, state: FSMContext, config: Config, db: DatabaseGateway
 ):
     await state.clear()
 
     db_admins = [user.id for user in await db.user.reader.select_many(admin=True)]
-    admins = db_admins + settings.admins
+    admins = db_admins + config.bot.admins
 
     if not admins:
         await message.reply(_(texts.ADMINS_NOT_FOUND))
