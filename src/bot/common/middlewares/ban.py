@@ -10,7 +10,7 @@ from aiogram import types
 
 from src.bot.utils import texts
 from src.config.settings import Settings
-from src.database.core import Database
+from src.database.core.gateway import DatabaseGateway
 from src.bot.common.middlewares.i18n import gettext as _
 
 
@@ -26,8 +26,8 @@ class BanMiddleware(BaseMiddleware):
         if event.from_user.id in settings.admins:
             result = await handler(event, data)
             return result
-        db: Database = data['db']
-        check_user = await db.user.select(user_id=event.from_user.id)
+        db: DatabaseGateway = data["db"]
+        check_user = await db.user.reader.select(user_id=event.from_user.id)
         if not check_user.blocked:
             result = await handler(event, data)
             return result

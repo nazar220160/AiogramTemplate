@@ -12,7 +12,7 @@ from aiogram.types import User, Message, CallbackQuery
 from src.bot import keyboards
 from src.bot.core.models import MyBot
 from src.config.settings import Settings
-from src.database.core import Database
+from src.database.core.gateway import DatabaseGateway
 from src.bot.utils.other import check_com_sub
 
 
@@ -29,9 +29,9 @@ class ComSubMiddleware(BaseMiddleware):
         if from_user.id in settings.admins:
             result = await handler(event, data)
             return result
-        db: Database = data['db']
+        db: DatabaseGateway = data["db"]
         bot: MyBot = data['bot']
-        chats = await db.com_sub_chats.get_chats_turn_on()
+        chats = await db.bot_chats.reader.select_many(sub=True)
         not_sub_list = await check_com_sub(bot=bot, user_id=from_user.id,
                                            sub_list=chats)
 

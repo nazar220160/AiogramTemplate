@@ -1,11 +1,11 @@
 from typing import Any, List, Optional, Union
 
-from aiogram.filters import Filter
 from aiogram import types
+from aiogram.filters import Filter
 
-from src.config.settings import load_settings
-from src.database.core import Database
 from src.bot.utils import is_admin
+from src.config.settings import load_settings
+from src.database.core.gateway import DatabaseGateway
 
 
 class IsAdmin(Filter):
@@ -16,6 +16,6 @@ class IsAdmin(Filter):
         self.admins = admins or []
 
     async def __call__(
-            self, event: Union[types.CallbackQuery, types.Message], db: Database
+        self, event: Union[types.CallbackQuery, types.Message], db: DatabaseGateway
     ) -> Any:
         return await is_admin(user_id=event.from_user.id, admins=self.admins, db=db)

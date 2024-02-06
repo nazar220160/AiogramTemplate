@@ -1,19 +1,18 @@
 import random
 
 from aiogram import types
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 
 from src.bot import keyboards
-from src.config.settings import Settings
-from src.bot.utils.texts import client as texts
-from src.database.core import Database
-from src.common.dto import QuestionCreate
-from src.bot.common.states.main import Support
-
-from src.bot.utils.callback import CallbackData as Cb
-from src.bot.routers.client.router import client_router
 from src.bot.common.middlewares.i18n import gettext as _
+from src.bot.common.states.main import Support
+from src.bot.routers.client.router import client_router
+from src.bot.utils.callback import CallbackData as Cb
+from src.bot.utils.texts import client as texts
+from src.common.dto import QuestionCreate
+from src.config.settings import Settings
+from src.database.core.gateway import DatabaseGateway
 
 
 @client_router.message(CommandStart())
@@ -22,22 +21,22 @@ async def start(message: types.Message, state: FSMContext):
     await message.answer(text=_(texts.START), reply_markup=keyboards.start())
 
 
-@client_router.message(Command('support'))
+@client_router.message(Command("support"))
 async def support(message: types.Message, state: FSMContext):
     await state.set_state(Support.message)
-    await message.reply(text=_(texts.SUPPORT),
-                        reply_markup=keyboards.back(
-                            to=Cb.Back.main_menu(),
-                            main_menu=True
-                        ))
+    await message.reply(
+        text=_(texts.SUPPORT),
+        reply_markup=keyboards.back(to=Cb.Back.main_menu(), main_menu=True),
+    )
 
 
 @client_router.message(Support.message)
-async def get_support_message(message: types.Message, state: FSMContext,
-                              settings: Settings, db: Database):
+async def get_support_message(
+    message: types.Message, state: FSMContext, settings: Settings, db: DatabaseGateway
+):
     await state.clear()
 
-    db_admins = [user.user_id for user in await db.user.get_admins()]
+    db_admins = [user.id for user in await db.user.reader.select_many(admin=True)]
     admins = db_admins + settings.admins
 
     if not admins:
@@ -45,11 +44,13 @@ async def get_support_message(message: types.Message, state: FSMContext,
         return
 
     mes = await message.forward(chat_id=random.choice(admins))
-    await db.question.create(query=QuestionCreate(
-        user_id=message.from_user.id,
-        user_message_id=message.message_id,
-        admin_message_id=mes.message_id
-    ))
+    await db.question.writer.create(
+        query=QuestionCreate(
+            user_id=message.from_user.id,
+            user_message_id=message.message_id,
+            admin_message_id=mes.message_id,
+        )
+    )
     await message.reply(_(texts.SUPPORT_YOUR_MESSAGE_SEND_ADMIN))
 
 

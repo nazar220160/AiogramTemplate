@@ -1,97 +1,193 @@
 from typing import (
     Any,
-    Dict,
-    TypeVar,
-    Iterable,
+    Mapping,
     Optional,
-    Type,
-    Union,
     Sequence,
+    Type,
+    TypeVar,
+    cast,
 )
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import (
+    ColumnExpressionArgument,
     CursorResult,
-    select,
-    insert,
-    update,
     delete,
-    ColumnElement
+    exists,
+    func,
+    insert,
+    select,
+    update,
 )
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.interfaces.repositories.crud import AbstractCRUDRepository
+from src.common.interfaces import AbstractCRUDRepository
 from src.database.models.base import Base
 
-Model = TypeVar('Model', bound=Base)
+ModelType = TypeVar("ModelType", bound=Base)
 
 
-class CRUDRepository(AbstractCRUDRepository[Model]):
+class SQLAlchemyCRUDRepository(
+    AbstractCRUDRepository[ModelType, ColumnExpressionArgument[bool]]
+):
+    """
+    Repository class for CRUD (Create, Read, Update, Delete) operations using SQLAlchemy with asynchronous support.
 
-    def __init__(self, session: AsyncSession, model: Type[Model]) -> None:
-        super(CRUDRepository, self).__init__(model)
+    Args:
+        session (AsyncSession): The SQLAlchemy asynchronous session to be used for database operations.
+        model (Type[ModelType]): The SQLAlchemy model type associated with the repository.
+
+    Attributes:
+        _session (AsyncSession): The SQLAlchemy asynchronous session associated with the repository.
+    """
+
+    __slots__ = ("_session",)
+
+    def __init__(self, session: AsyncSession, model: Type[ModelType]) -> None:
+        """
+        Initialize the repository with the provided asynchronous session and model type.
+
+        Args:
+            session (AsyncSession): The SQLAlchemy asynchronous session to be used for database operations.
+            model (Type[ModelType]): The SQLAlchemy model type associated with the repository.
+        """
+        super().__init__(model)
         self._session = session
 
-    async def create(self, **values: Dict[str, Any]) -> Optional[Model]:
-        stmt = (
-            insert(self.model)
-            .values(**values)
-            .returning(self.model)
-        )
+    async def create(self, **values: Any) -> Optional[ModelType]:
+        """
+        Create a new entry in the data storage using the provided values.
 
+        Args:
+            **values (Mapping[str, Any]): Keyword arguments representing the values to be stored.
+
+        Returns:
+            Optional[ModelType]: The created entry if successful, or None if the creation fails.
+        """
+        stmt = insert(self.model).values(**values).returning(self.model)
         return (await self._session.execute(stmt)).scalars().first()
 
-    async def create_many(self, data: Iterable[Union[Model, Dict[str, Any]]]) -> Sequence[Model]:
-        stmt = (
-            insert(self.model)
-            .returning(self.model)
-        )
-        params = [model if isinstance(model, dict) else model.as_dict() for model in data]
-        result = await self._session.scalars(stmt, params)
+    async def create_many(
+        self, data: Sequence[Mapping[str, Any]]
+    ) -> Sequence[ModelType]:
+        """
+        Create multiple entries in the data storage using the provided data.
+
+        Args:
+            data (Sequence[Mapping[str, Any]]): A sequence of dictionaries representing data for multiple entries.
+
+        Returns:
+            Sequence[ModelType]: A sequence of created entries.
+        """
+        stmt = insert(self.model).returning(self.model)
+        result = await self._session.scalars(stmt, data)
         return result.all()
 
     async def select(
-            self,
-            *clauses: ColumnElement[bool],
-    ) -> Optional[Model]:
-        stmt = select(self.model).where(*clauses)
+        self,
+        *clauses: ColumnExpressionArgument[bool],
+    ) -> Optional[ModelType]:
+        """
+        Select and retrieve an entry from the data storage based on the provided clauses.
 
+        Args:
+            *clauses (ColumnExpressionArgument[bool]): Columns or conditions used for selection.
+
+        Returns:
+            Optional[ModelType]: The selected entry if found, or None if no matching entry is found.
+        """
+        stmt = select(self.model).where(*clauses)
         return (await self._session.execute(stmt)).scalars().first()
 
     async def select_many(
-            self,
-            *clauses: ColumnElement[bool],
-            offset: Optional[int] = None,
-            limit: Optional[int] = None,
-    ) -> Sequence[Model]:
-        stmt = (
-            select(self.model)
-            .where(*clauses)
-            .offset(offset)
-            .limit(limit)
-        )
+        self,
+        *clauses: ColumnExpressionArgument[bool],
+        offset: Optional[int] = None,
+        limit: Optional[int] = None,
+    ) -> Sequence[ModelType]:
+        """
+        Select and retrieve multiple entries from the data storage based on the provided clauses and pagination options.
 
+        Args:
+            *clauses (ColumnExpressionArgument[bool]): Columns or conditions used for selection.
+            offset (Optional[int]): Offset for pagination.
+            limit (Optional[int]): Maximum number of entries to retrieve.
+
+        Returns:
+            Sequence[ModelType]: A sequence of selected entries.
+        """
+        stmt = select(self.model).where(*clauses).offset(offset).limit(limit)
         return (await self._session.execute(stmt)).scalars().all()
 
-    async def update(self, *clauses: ColumnElement[bool], **values: Dict[str, Any]) -> Sequence[Model]:
-        stmt = (
-            update(self.model)
-            .where(*clauses)
-            .values(**values)
-            .returning(self.model)
-        )
+    async def update(
+        self, *clauses: ColumnExpressionArgument[bool], **values: Any
+    ) -> Sequence[ModelType]:
+        """
+        Update one or more entries in the data storage based on the provided clauses and values.
 
+        Args:
+            *clauses (ColumnExpressionArgument[bool]): Columns or conditions used for selection and update.
+            **values (Mapping[str, Any]): Keyword arguments representing the values to update.
+
+        Returns:
+            Sequence[ModelType]: A sequence of updated entries.
+        """
+        stmt = update(self.model).where(*clauses).values(**values).returning(self.model)
         return (await self._session.execute(stmt)).scalars().all()
 
-    async def update_many(self, data: Iterable[Union[Model, Dict[str, Any]]]) -> CursorResult[Any]:
-        params = [model if isinstance(model, dict) else model.as_dict() for model in data]
+    async def update_many(self, data: Sequence[Mapping[str, Any]]) -> CursorResult[Any]:
+        """
+        Update multiple entries in the data storage using the provided data.
 
-        return await self._session.execute(update(self.model), params)
+        Args:
+            data (Sequence[Mapping[str, Any]]): A sequence of dictionaries representing data for updating multiple entries.
 
-    async def delete(self, *clauses: ColumnElement[bool]) -> Sequence[Model]:
-        stmt = (
-            delete(self.model)
-            .where(*clauses)
-            .returning(self.model)
-        )
+        Returns:
+            CursorResult[Any]: Implementation-specific return value indicating the result of the update operation.
+        """
+        return await self._session.execute(update(self.model), data)
 
+    async def delete(
+        self, *clauses: ColumnExpressionArgument[bool]
+    ) -> Sequence[ModelType]:
+        """
+        Delete one or more entries from the data storage based on the provided clauses.
+
+        Args:
+            *clauses (ColumnExpressionArgument[bool]): Columns or conditions used for selection and deletion.
+
+        Returns:
+            Sequence[ModelType]: A sequence of deleted entries.
+        """
+        stmt = delete(self.model).where(*clauses).returning(self.model)
         return (await self._session.execute(stmt)).scalars().all()
+
+    async def exists(self, *clauses: ColumnExpressionArgument[bool]) -> bool:
+        """
+        Check if an entry matching the provided clauses exists in the data storage.
+
+        Args:
+            *clauses (ColumnExpressionArgument[bool]): Columns or conditions used for existence check.
+
+        Returns:
+            bool: True if an entry exists, False otherwise.
+        """
+        stmt = exists(select(self.model).where(*clauses)).select()
+        return cast(bool, await self._session.scalar(stmt))
+
+    async def count(self, *clauses: ColumnExpressionArgument[bool]) -> int:
+        """
+        Count the number of entries in the data storage based on the provided clauses.
+
+        Args:
+            *clauses (ColumnExpressionArgument[bool]): Columns or conditions used for counting.
+
+        Returns:
+            int: The count of entries that match the provided clauses.
+        """
+        stmt = select(func.count()).where(*clauses).select_from(self.model)
+        return cast(int, await self._session.scalar(stmt))
+
+    def with_query_model(
+        self, model: Type[ModelType]
+    ) -> "SQLAlchemyCRUDRepository[ModelType]":
+        return SQLAlchemyCRUDRepository(self._session, model)

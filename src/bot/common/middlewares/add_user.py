@@ -7,7 +7,7 @@ from typing import (
 
 from aiogram import BaseMiddleware
 from aiogram import types
-from src.database.core import Database
+from src.database.core.gateway import DatabaseGateway
 from src.common.dto import UserCreate
 
 
@@ -18,13 +18,12 @@ class AddUserMiddleware(BaseMiddleware):
             event: types.TelegramObject,
             data: Dict[str, Any]
     ) -> Any:
-        db: Database = data['db']
+        db: DatabaseGateway = data["db"]
 
-        user_info = await db.user.select(user_id=event.from_user.id)
+        user_info = await db.user.reader.select(user_id=event.from_user.id)
         if not user_info:
-            await db.user.create(query=UserCreate(
-                user_id=event.from_user.id,
-                **event.from_user.model_dump(exclude_none=False, exclude='id')
+            await db.user.writer.create(query=UserCreate(
+                **event.from_user.model_dump(exclude_none=False)
             ))
 
         return await handler(event, data)

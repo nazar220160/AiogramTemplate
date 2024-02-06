@@ -10,6 +10,7 @@ from aiogram import BaseMiddleware, types
 from aiogram.fsm.storage.base import BaseStorage
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from src.bot.common.middlewares.i18n import gettext as _
 from src.bot.utils import texts
 
 TRIGGER_VALUE: Final[int] = 4
@@ -18,22 +19,20 @@ DEFAULT_MESSAGE_TIMEOUT: Final[int] = 10
 
 class ThrottlingMiddleware(BaseMiddleware):
 
-    def __init__(
-            self, storage: BaseStorage
-    ) -> None:
+    def __init__(self, storage: BaseStorage) -> None:
         self._storage = storage
 
     async def __call__(
-            self,
-            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
-            event: types.Message,
-            data: Dict[str, Any]
+        self,
+        handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        event: types.Message,
+        data: Dict[str, Any],
     ) -> Any:
 
         if isinstance(self._storage, MemoryStorage):
             return await handler(event, data)
 
-        user = f'user_message_{event.from_user.id}'  # type: ignore
+        user = f"user_message_{event.from_user.id}"  # type: ignore
         timeout = DEFAULT_MESSAGE_TIMEOUT
 
         is_throttled = await self._storage.redis.get(user)  # type: ignore

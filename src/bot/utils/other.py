@@ -4,7 +4,7 @@ from aiogram import Bot, types
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import ChatMemberLeft
 
-from src.common.dto import ComSubChatsDTO
+from src.database.models import BotChats
 
 
 async def set_bot_commands(bot: Bot):
@@ -29,14 +29,15 @@ def paginate(list_items, items_per_page):
     return [[]] if not paginated_list else paginated_list
 
 
-async def check_com_sub(bot: Bot,
-                        user_id: int,
-                        sub_list: List[ComSubChatsDTO]
-                        ) -> List[ComSubChatsDTO]:
+async def check_com_sub(
+    bot: Bot, user_id: int, sub_list: List[BotChats]
+) -> List[BotChats]:
     not_sub_list = []
     for chat in sub_list:
+        if chat.permissions["status"] != "administrator":
+            continue
         try:
-            check = await bot.get_chat_member(chat_id=chat.chat_id, user_id=user_id)
+            check = await bot.get_chat_member(chat_id=chat.id, user_id=user_id)
         except TelegramBadRequest:
             continue
         if isinstance(check, ChatMemberLeft):

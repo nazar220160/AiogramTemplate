@@ -7,14 +7,15 @@ from sqlalchemy import (
     BigInteger,
 )
 
-from src.database.models.base import ModelWithTime, Base
+from src.database.models.base import Base
+from src.database.models.base.mixins import ModelWithTimeMixin
 
 if TYPE_CHECKING:
     from src.database.models.question import Question
 
 
-class User(Base, ModelWithTime):
-    user_id: Mapped[int] = mapped_column(
+class User(ModelWithTimeMixin, Base):
+    id: Mapped[int] = mapped_column(
         BigInteger,
         primary_key=True,
         unique=True,
