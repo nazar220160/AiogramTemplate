@@ -12,7 +12,11 @@ from src.database.models.session import Session
 
 def start():
     result = InlineKeyboardBuilder()
-    result.row(InlineKeyboardButton(text=f"👤 {_(texts.ACCOUNTS)}", callback_data=Cd.Start.accounts()))
+    result.row(
+        InlineKeyboardButton(
+            text=f"👤 {_(texts.ACCOUNTS)}", callback_data=Cd.Start.accounts()
+        )
+    )
     return result.as_markup()
 
 
@@ -205,7 +209,7 @@ def accounts_list(
     len_ls = len(ls)
     count = page_num if len_ls != 1 else 0
     for i in ls[count]:
-        text = f"{i.phone_number}: {i.full_name}"
+        text = f"{i.phone_number}: {i.first_name} {i.last_name if i.last_name else ''}"
         result.row(
             InlineKeyboardButton(
                 text=text, callback_data=Cd.Accounts.select(i.id, data)
@@ -240,6 +244,44 @@ def accounts_list(
     result.add(
         InlineKeyboardButton(
             text=f"🔙 {_(texts.MAIN_MENU)}", callback_data=Cd.Back.main_menu()
+        )
+    )
+    return result.as_markup()
+
+
+def auth_account():
+    result = InlineKeyboardBuilder()
+    result.add(
+        InlineKeyboardButton(
+            text=f"❌ {_(texts.CANCEL)}", callback_data=Cd.Start.accounts()
+        )
+    )
+
+    result.add(
+        InlineKeyboardButton(
+            text=f"📸 {_(texts.AUTH_WITH_QR)}", callback_data=Cd.Accounts.auth_with_qr()
+        )
+    )
+    return result.as_markup()
+
+
+def session_settings(included: bool, session_id: int):
+    result = InlineKeyboardBuilder()
+    text_turn = f"✅ {_(texts.TURN_OFF)}" if included else f"❌ {_(texts.TURN_ON)}"
+    result.add(
+        InlineKeyboardButton(
+            text=text_turn, callback_data=Cd.AccountSettings.turn(session_id)
+        )
+    )
+    result.row(
+        InlineKeyboardButton(
+            text=f"🗑 {_(texts.DELETE)}",
+            callback_data=Cd.AccountSettings.remove(session_id),
+        )
+    )
+    result.add(
+        InlineKeyboardButton(
+            text=f"🔙 {_(texts.BACK)}", callback_data=Cd.Start.accounts()
         )
     )
     return result.as_markup()

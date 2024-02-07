@@ -1,4 +1,4 @@
-from src.bot.utils.callback.models import MetaInner, _Inner, CallbackExtract
+from src.bot.utils.callback.models import CallbackExtract, MetaInner, _Inner
 
 
 class CallbackData:
@@ -26,14 +26,19 @@ class CallbackData:
         select = _Inner()
         add = _Inner()
         settings = _Inner()
+        auth_with_qr = _Inner()
+
+    class AccountSettings(metaclass=MetaInner):
+        turn = _Inner()
+        remove = _Inner()
 
     class Back(metaclass=MetaInner):
         main_menu = _Inner()
 
     @staticmethod
-    def extract(cd: str, c: bool = False, split_symbol: str = ':') -> CallbackExtract:
+    def extract(cd: str, c: bool = False, split_symbol: str = ":") -> CallbackExtract:
         args = cd.split(split_symbol)[1:] if len(cd.split(split_symbol)) > 1 else None
         cb_data = cd.split(split_symbol)[0]
         if c is True:
-            cb_data = cb_data.split('~')[0]
+            cb_data = cb_data.split("~")[0]
         return CallbackExtract(data=cb_data, args=args)

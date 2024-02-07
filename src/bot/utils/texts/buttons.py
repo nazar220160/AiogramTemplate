@@ -16,3 +16,7 @@ UNBAN = _("Разбанить")
 
 ACCOUNTS = _("Аккаунты")
 SETTINGS = _("Настройки")
+AUTH_WITH_QR = _("QR Код")
+
+TURN_ON = _("Включить")
+TURN_OFF = _("Выключить")

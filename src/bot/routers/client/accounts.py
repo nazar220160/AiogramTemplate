@@ -12,7 +12,8 @@ from src.database.core.gateway import DatabaseGateway
 
 @client_router.callback_query(lambda c: Cd.extract(c.data).data == Cd.Start.accounts())
 async def start(callback: types.CallbackQuery, db: DatabaseGateway):
-    sessions = await db.session.select_many_with_user_id(user_id=callback.from_user.id)
+    await callback.message.delete()
+    sessions = await db.session.reader.select_many(user_id=callback.from_user.id)
     pag = paginate(list_items=sessions, items_per_page=6)
     reply_markup = keyboards.accounts_list(pag)
     await callback.message.answer(
@@ -24,7 +25,7 @@ async def start(callback: types.CallbackQuery, db: DatabaseGateway):
 async def account_move(callback: types.CallbackQuery, db: DatabaseGateway):
     data = Cd.extract(callback.data)
     settings = True if data.args[1] == "True" else False
-    sessions = await db.session.select_many_with_user_id(user_id=callback.from_user.id)
+    sessions = await db.session.reader.select_many(user_id=callback.from_user.id)
     pag = paginate(sessions, 6)
     reply_markup = keyboards.accounts_list(
         ls=pag, page_num=int(data.args[0]), data=data.args[-1], settings=settings
@@ -40,14 +41,14 @@ async def account_settings(
 ):
     data = Cd.extract(callback.data)
     session_id = int(data.args[0])
-    account_base = await db.session.select(session_id=session_id)
-    client: TelegramApplication = sessions.get_client(db_id=session_id)
+    account_base = await db.session.reader.select(session_id=session_id)
+    client: TelegramApplication = sessions.get_client(database_id=session_id)
     reply_markup = keyboards.session_settings(
         included=client.is_connected(), session_id=session_id
     )
     text = _(texts.SESSION_SETTING).format(
         account_base.phone_number,
-        f"{account_base.first_name} {account_base.last_name}",
+        f"{account_base.first_name} {account_base.last_name if account_base.last_name else ''}",
         f"{'✅' if client.is_connected() is True else '⛔️'}",
     )
     await callback.message.edit_text(text=text, reply_markup=reply_markup)
@@ -64,14 +65,14 @@ async def account_setting(
     data = Cd.extract(callback.data)
     session_id = int(data.args[0])
 
-    client: TelegramApplication = sessions.get_client(db_id=session_id)
+    client: TelegramApplication = sessions.get_client(database_id=session_id)
 
     if data.data == Cd.AccountSettings.remove():
         if client.is_connected():
             await client.disconnect()
         await db.session.delete(session_id=session_id)
 
-        db_sessions = await db.session.select_many_with_user_id(
+        db_sessions = await db.session.reader.select_many(
             user_id=callback.from_user.id
         )
         pag = paginate(db_sessions, 6)
@@ -92,10 +93,10 @@ async def account_setting(
             await client.connect()
             info = f"{client.phone_number} | is Started...🍃"
 
-        account_base = await db.session.select(session_id=session_id)
+        account_base = await db.session.reader.select(session_id=session_id)
         text = _(texts.SESSION_SETTING).format(
             account_base.phone_number,
-            f"{account_base.first_name} {account_base.last_name}",
+            f"{account_base.first_name} {account_base.last_name if account_base.last_name else ''}",
             f"{'✅' if client.is_connected() is True else '⛔️'}",
         )
         reply_markup = keyboards.session_settings(
