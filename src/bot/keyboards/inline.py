@@ -7,10 +7,12 @@ from src.bot.utils.callback import CallbackData as Cd
 from src.bot.utils.other import get_next_pag
 from src.bot.utils.texts import buttons as texts
 from src.database.models import BotChats, User
+from src.database.models.session import Session
 
 
 def start():
     result = InlineKeyboardBuilder()
+    result.row(InlineKeyboardButton(text=f"👤 {_(texts.ACCOUNTS)}", callback_data=Cd.Start.accounts()))
     return result.as_markup()
 
 
@@ -192,5 +194,52 @@ def banned_users(ls: list[list[User]], page_num=0):
     )
     result.add(
         InlineKeyboardButton(text=f"🔙 {_(texts.BACK)}", callback_data=Cd.Admin.main())
+    )
+    return result.as_markup()
+
+
+def accounts_list(
+    ls: List[List[Session]], page_num=0, data="account", settings: bool = True
+):
+    result = InlineKeyboardBuilder()
+    len_ls = len(ls)
+    count = page_num if len_ls != 1 else 0
+    for i in ls[count]:
+        text = f"{i.phone_number}: {i.full_name}"
+        result.row(
+            InlineKeyboardButton(
+                text=text, callback_data=Cd.Accounts.select(i.id, data)
+            )
+        )
+        if settings is True:
+            result.add(
+                InlineKeyboardButton(
+                    text=f"⚙️ {_(texts.SETTINGS)}",
+                    callback_data=Cd.Accounts.settings(i.id),
+                )
+            )
+    if len_ls != 1:
+        move_back, move_next = get_next_pag(len_ls=len_ls, page_num=page_num)
+        result.row(
+            InlineKeyboardButton(
+                text="⬅", callback_data=Cd.Accounts.move(move_back, settings, data)
+            )
+        )
+        result.add(
+            InlineKeyboardButton(text=f"{page_num + 1}/{len_ls}", callback_data="None")
+        )
+        result.add(
+            InlineKeyboardButton(
+                text="➡", callback_data=Cd.Accounts.move(move_next, settings, data)
+            )
+        )
+
+    result.row(
+        InlineKeyboardButton(text=f"➕ {_(texts.ADD)}", callback_data=Cd.Accounts.add())
+    )
+    result.add(
+        InlineKeyboardButton(
+            text=f"🔙 {_(texts.MAIN_MENU)}", callback_data=Cd.Back.main_menu()
+        )
     )
     return result.as_markup()

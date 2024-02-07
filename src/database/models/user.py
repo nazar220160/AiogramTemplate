@@ -12,6 +12,7 @@ from src.database.models.base.mixins import ModelWithTimeMixin
 
 if TYPE_CHECKING:
     from src.database.models.question import Question
+    from src.database.models.session import Session
 
 
 class User(ModelWithTimeMixin, Base):
@@ -32,3 +33,4 @@ class User(ModelWithTimeMixin, Base):
         'Question',
         back_populates='user'
     )
+    sessions: Mapped[List["Session"]] = relationship("Session", back_populates="user")

@@ -59,10 +59,29 @@ class RedisConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class TelegramConfig:
+    api_id: int
+    api_hash: str
+
+    @property
+    def params(self) -> dict:
+        return {
+            "api_id": self.api_id,
+            "api_hash": self.api_hash,
+            "system_version": "11",
+            "app_version": "10.0.8 (38679)",
+            "device_model": "TECNO BD4a",
+            "lang_code": "ru",
+            "system_lang_code": "ru-RU",
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class Config:
     db: DBConfig
     bot: BotConfig
     redis: RedisConfig
+    telegram: TelegramConfig
 
     @staticmethod
     def root_dir() -> Path:
@@ -90,5 +109,8 @@ def load_config() -> Config:
         redis=RedisConfig(
             host=get_env("REDIS_HOST"),
             port=get_env("REDIS_PORT"),
+        ),
+        telegram=TelegramConfig(
+            api_id=get_env("TELEGRAM_API_ID"), api_hash=get_env("TELEGRAM_API_HASH")
         ),
     )

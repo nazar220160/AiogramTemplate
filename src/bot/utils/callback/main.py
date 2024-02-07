@@ -3,7 +3,7 @@ from src.bot.utils.callback.models import MetaInner, _Inner, CallbackExtract
 
 class CallbackData:
     class Start(metaclass=MetaInner):
-        ...
+        accounts = _Inner()
 
     class Admin(metaclass=MetaInner):
         ross = _Inner()
@@ -20,6 +20,12 @@ class CallbackData:
         unban = _Inner()
         move_banned_users = _Inner()
         ban = _Inner()
+
+    class Accounts(metaclass=MetaInner):
+        move = _Inner()
+        select = _Inner()
+        add = _Inner()
+        settings = _Inner()
 
     class Back(metaclass=MetaInner):
         main_menu = _Inner()

@@ -17,6 +17,9 @@ __all__ = [
     "UserCreate",
     "UserUpdate",
     "User",
+    "SessionCreate",
+    "SessionUpdate",
+    "Session",
 ]
 
 
@@ -122,3 +125,40 @@ class UserUpdate(DTO):
     is_premium: Optional[bool] = None
     blocked: Optional[bool] = None
     admin: Optional[bool] = None
+
+
+class Session(DTO):
+    id: int
+    user_id: int
+    phone_number: int
+    first_name: str
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    session: str
+    proxy: Optional[dict] = None
+
+    user: "User"
+
+    created_at: datetime
+    updated_at: datetime
+    deleted_at: datetime
+
+
+class SessionCreate(DTO):
+    user_id: int
+    phone_number: int
+    first_name: str
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    session: str
+    proxy: Optional[dict] = None
+
+
+class SessionUpdate(DTO):
+    user_id: Optional[int] = None
+    phone_number: Optional[int] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    session: Optional[str] = None
+    proxy: Optional[dict] = None

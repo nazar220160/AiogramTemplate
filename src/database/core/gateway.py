@@ -8,6 +8,7 @@ from src.database.repositories import (
     BotChatsRepository,
     QuestionRepository,
     UserRepository,
+    SessionRepository,
 )
 
 
@@ -40,6 +41,10 @@ class DatabaseGateway:
     @property
     def bot_chats(self) -> BotChatsRepository:
         return BotChatsRepository(self.uow.session)
+
+    @property
+    def session(self) -> SessionRepository:
+        return SessionRepository(self.uow.session)
 
 
 def database_gateway_factory(unit_of_work: SQLAlchemyUnitOfWork) -> DatabaseGateway:

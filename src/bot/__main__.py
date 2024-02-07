@@ -1,8 +1,11 @@
 import asyncio
 from datetime import datetime
+from typing import List
 
 from aiogram import Bot, Dispatcher
+from telethon.sessions import StringSession
 
+from src.apps.telethon import TelegramApplication, TelegramAppManager
 from src.bot.common.middlewares import register_middlewares
 from src.bot.core import (
     load_bot,
@@ -12,7 +15,13 @@ from src.bot.core import (
 from src.bot.routers import router
 from src.bot.utils.other import set_bot_commands
 from src.core.config import load_config
-from src.database.core.connection import create_sa_engine, create_sa_session_factory
+from src.database.core.connection import (
+    create_sa_engine,
+    create_sa_session,
+    create_sa_session_factory,
+)
+from src.database.core.gateway import DatabaseGateway
+from src.database.core.unit_of_work import SQLAlchemyUnitOfWork
 from src.utils.logger import Logger
 
 logger = Logger()
@@ -35,6 +44,16 @@ async def on_shutdown(bot: Bot) -> None:
     )
 
 
+async def start_apps(apps: List[TelegramApplication], start: bool = True):
+    for app in apps:
+        try:
+            if start:
+                await app.connect()
+            logger.info(f"{app.phone_number} | is Started...🍃")
+        except Exception as e:
+            logger.error(str(e))
+
+
 async def main() -> None:
     config = load_config()
     bot = load_bot(config=config)
@@ -50,8 +69,38 @@ async def main() -> None:
 
     register_middlewares(dp=dp, session_factory=session_factory)
 
+    database_sessions = create_sa_session(session_factory=session_factory)
+    database_session = await database_sessions.__anext__()
+
+    async with DatabaseGateway(
+        unit_of_work=SQLAlchemyUnitOfWork(session=database_session)
+    ) as database:
+        telegram_sessions = await database.session.reader.select_many()
+
+    apps = []
+
+    for telegram_session in telegram_sessions:
+        client = TelegramApplication(
+            user_id=telegram_session.user_id,
+            session=StringSession(telegram_session.session),
+            config=config,
+            database_id=telegram_session.id,
+            phone_number=telegram_session.phone_number,
+            session_factory=session_factory,
+            bot=bot,
+        )
+
+        apps.append(client)
+
+    sessions = TelegramAppManager(apps=apps)
+    await start_apps(apps=apps, start=False)
+
     await dp.start_polling(
-        bot, config=config, allowed_updates=dp.resolve_used_update_types()
+        bot,
+        config=config,
+        session_factory=session_factory,
+        sessions=sessions,
+        allowed_updates=dp.resolve_used_update_types(),
     )
 
 
