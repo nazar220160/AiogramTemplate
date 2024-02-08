@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import (
     JSON,
@@ -12,6 +12,7 @@ from src.database.models.base import Base
 from src.database.models.base.mixins import ModelWithIDMixin, ModelWithTimeMixin
 
 if TYPE_CHECKING:
+    from src.database.models.dialog import Dialog
     from src.database.models.user import User
 
 
@@ -25,3 +26,4 @@ class Session(ModelWithTimeMixin, ModelWithIDMixin, Base):
     proxy: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=None)
 
     user: Mapped["User"] = relationship("User", back_populates="sessions")
+    dialogs: Mapped[List["Dialog"]] = relationship("Dialog", back_populates="session")

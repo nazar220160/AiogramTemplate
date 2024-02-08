@@ -20,3 +20,6 @@ AUTH_WITH_QR = _("QR Код")
 
 TURN_ON = _("Включить")
 TURN_OFF = _("Выключить")
+
+CHATS_LIST = _("Список чатов")
+UPDATE_LIST = _("Обновить список")

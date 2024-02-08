@@ -7,6 +7,7 @@ from src.bot.utils.callback import CallbackData as Cd
 from src.bot.utils.other import get_next_pag
 from src.bot.utils.texts import buttons as texts
 from src.database.models import BotChats, User
+from src.database.models.dialog import Dialog
 from src.database.models.session import Session
 
 
@@ -273,15 +274,60 @@ def session_settings(included: bool, session_id: int):
             text=text_turn, callback_data=Cd.AccountSettings.turn(session_id)
         )
     )
-    result.row(
+    result.add(
         InlineKeyboardButton(
             text=f"🗑 {_(texts.DELETE)}",
             callback_data=Cd.AccountSettings.remove(session_id),
         )
     )
+    result.row(InlineKeyboardButton(text=f"📋 {_(texts.CHATS_LIST)}", callback_data=Cd.AccountSettings.dialogs(session_id)))
+
     result.add(
         InlineKeyboardButton(
             text=f"🔙 {_(texts.BACK)}", callback_data=Cd.Start.accounts()
         )
     )
+    return result.as_markup()
+
+
+def dialogs(ls: List[List[Dialog]], account_id: int, page_num=0, data: str = ""):
+    result = InlineKeyboardBuilder()
+    len_ls = len(ls)
+    count = page_num if len_ls != 1 else 0
+    for i in ls[count]:
+        text_button = f"{i.chat_title} ({i.chat_id})"
+        result.row(
+            InlineKeyboardButton(
+                text=text_button,
+                callback_data=Cd.Dialogs.select(i.chat_id, account_id, data),
+            )
+        )
+    if len_ls != 1:
+        move_back, move_next = get_next_pag(len_ls=len_ls, page_num=page_num)
+        result.row(
+            InlineKeyboardButton(
+                text="⬅", callback_data=Cd.Dialogs.move(move_back, account_id, data)
+            )
+        )
+        result.add(
+            InlineKeyboardButton(text=f"{page_num + 1}/{len_ls}", callback_data="None")
+        )
+        result.add(
+            InlineKeyboardButton(
+                text="➡", callback_data=Cd.Dialogs.move(move_next, account_id, data)
+            )
+        )
+
+    update_list_cb = Cd.Dialogs.update(page_num, account_id, data)
+    result.row(
+        InlineKeyboardButton(
+            text=f"🔄 {_(texts.UPDATE_LIST)}", callback_data=update_list_cb
+        )
+    )
+    result.add(
+        InlineKeyboardButton(
+            text=f"🔙 {_(texts.MAIN_MENU)}", callback_data=Cd.Back.main_menu()
+        )
+    )
+
     return result.as_markup()

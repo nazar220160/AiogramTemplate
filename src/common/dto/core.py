@@ -20,6 +20,9 @@ __all__ = [
     "SessionCreate",
     "SessionUpdate",
     "Session",
+    "DialogCreate",
+    "DialogUpdate",
+    "Dialog",
 ]
 
 
@@ -68,7 +71,7 @@ class Question(DTO):
     admin_message_id: int
     status: Optional[Status]
     user_id: int
-    user: Optional["User"]
+    user: Optional["User"] = None
 
     created_at: datetime
     updated_at: datetime
@@ -136,8 +139,9 @@ class Session(DTO):
     username: Optional[str] = None
     session: str
     proxy: Optional[dict] = None
-
-    user: "User"
+    
+    user: Optional["User"] = None
+    dialogs: List["Dialog"]
 
     created_at: datetime
     updated_at: datetime
@@ -162,3 +166,44 @@ class SessionUpdate(DTO):
     username: Optional[str] = None
     session: Optional[str] = None
     proxy: Optional[dict] = None
+
+
+class Dialog(DTO):
+    id: int
+    user_id: int
+    session_id: int
+
+    chat_id: int
+    chat_username: Optional[str] = None
+    chat_title: Optional[str] = None
+    chat_type: str
+    admin_rights: Optional[dict] = None
+    members_count: Optional[int] = None
+
+    session: Optional["Session"] = None
+
+    created_at: datetime
+    updated_at: datetime
+    deleted_at: datetime
+
+
+class DialogCreate(DTO):
+    user_id: int
+    session_id: int
+    chat_id: int
+    chat_username: Optional[str] = None
+    chat_title: Optional[str] = None
+    chat_type: str
+    admin_rights: Optional[dict] = None
+    members_count: Optional[int] = None
+
+
+class DialogUpdate(DTO):
+    user_id: Optional[int] = None
+    session_id: Optional[int] = None
+    chat_id: Optional[int] = None
+    chat_username: Optional[str] = None
+    chat_title: Optional[str] = None
+    chat_type: Optional[str] = None
+    admin_rights: Optional[dict] = None
+    members_count: Optional[int] = None

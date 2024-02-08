@@ -27,7 +27,7 @@ class TelegramApplication(TelegramClient):
         bot: Optional[MyBot] = None,
     ) -> None:
         super().__init__(session, **config.telegram.params)
-        self.session.set_dc(2, "149.154.167.40", 443)
+        # self.session.set_dc(2, "149.154.167.40", 443)
 
         self.config = config
         self.user_id = user_id

@@ -31,6 +31,12 @@ class CallbackData:
     class AccountSettings(metaclass=MetaInner):
         turn = _Inner()
         remove = _Inner()
+        dialogs = _Inner()
+        
+    class Dialogs(metaclass=MetaInner):
+        move = _Inner()
+        update = _Inner()
+        select = _Inner()
 
     class Back(metaclass=MetaInner):
         main_menu = _Inner()

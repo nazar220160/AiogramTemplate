@@ -6,9 +6,10 @@ from typing import Optional, Type
 from src.database.core.unit_of_work import SQLAlchemyUnitOfWork
 from src.database.repositories import (
     BotChatsRepository,
+    DialogRepository,
     QuestionRepository,
-    UserRepository,
     SessionRepository,
+    UserRepository,
 )
 
 
@@ -45,6 +46,10 @@ class DatabaseGateway:
     @property
     def session(self) -> SessionRepository:
         return SessionRepository(self.uow.session)
+    
+    @property
+    def dialog(self) -> DialogRepository:
+        return DialogRepository(self.uow.session)
 
 
 def database_gateway_factory(unit_of_work: SQLAlchemyUnitOfWork) -> DatabaseGateway:

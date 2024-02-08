@@ -105,6 +105,14 @@ async def account_setting(
 
         await callback.message.edit_text(text=text, reply_markup=reply_markup)
         await callback.answer(text=info, show_alert=True)
+        
+    elif data.data == Cd.AccountSettings.dialogs():
+        dialogs = await db.dialog.reader.select_many(session_id=session_id)
+        pag = paginate(dialogs, 10)
+        reply_markup = keyboards.dialogs(pag, data="none", account_id=session_id)
+        await callback.message.edit_text(
+            text=_(texts.DIALOGS_LIST), reply_markup=reply_markup
+        )
 
 
 @client_router.callback_query(lambda c: Cd.extract(c.data).data == Cd.Accounts.select())
