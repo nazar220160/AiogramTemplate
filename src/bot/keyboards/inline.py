@@ -83,7 +83,7 @@ def com_chats(ls: list[list[BotChats]], page_num=0):
         result.row(
             InlineKeyboardButton(text="🟢" if i.sub else "🔴", callback_data=cb_turn)
         )
-        result.add(InlineKeyboardButton(text=i.username, callback_data="None"))
+        result.add(InlineKeyboardButton(text=i.username or i.title, callback_data="None"))
         result.add(
             InlineKeyboardButton(text="🟢" if i.sub else "🔴", callback_data=cb_turn)
         )
