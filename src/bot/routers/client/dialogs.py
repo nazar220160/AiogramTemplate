@@ -12,7 +12,6 @@ from src.bot.utils.callback import CallbackData as Cd
 from src.bot.utils.other import paginate
 from src.common.dto import DialogCreate
 from src.database.core.gateway import DatabaseGateway
-from telethon.tl import functions
 
 
 @client_router.callback_query(lambda c: Cd.extract(c.data).data == Cd.Dialogs.update())
@@ -31,12 +30,14 @@ async def dialogs_update(
 
     try:
         async with client:
-            await save_dialogs(user_id=user_id, client=client, session_id=account_id, db=db)
+            await save_dialogs(
+                user_id=user_id, client=client, session_id=account_id, db=db
+            )
     except ConnectionError as e:
         await db.uow.rollback()
         await callback.answer(str(e), show_alert=True)
         return
-    
+
     except Exception:
         await db.uow.rollback()
         file_text = traceback.format_exc().encode()
@@ -62,7 +63,9 @@ async def dialogs_move(callback: types.CallbackQuery, db: DatabaseGateway):
     data = Cd.extract(callback.data)
     session_id = int(data.args[1])
     if data.args[-1] == Cd.Parser.start():
-        db_dialogs = await db.dialog.reader.select_many(session_id=session_id, chat_type="group")
+        db_dialogs = await db.dialog.reader.select_many(
+            session_id=session_id, chat_type="group"
+        )
     else:
         db_dialogs = await db.dialog.reader.select_many(session_id=session_id)
     pag = paginate(db_dialogs, 10)
