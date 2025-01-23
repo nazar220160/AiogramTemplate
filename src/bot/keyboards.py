@@ -250,9 +250,15 @@ def accounts_list(
     return result.as_markup()
 
 
-def auth_account():
+def auth_account(test_net: bool = False):
     result = InlineKeyboardBuilder()
-    result.add(
+    result.row(
+        InlineKeyboardButton(
+            text=f"{'🧪' if test_net else '🏘'} {_(texts.NETWORK)}",
+            callback_data=Cd.Accounts.switch_network(int(test_net)),
+        )
+    )
+    result.row(
         InlineKeyboardButton(
             text=f"❌ {_(texts.CANCEL)}", callback_data=Cd.Start.accounts()
         )

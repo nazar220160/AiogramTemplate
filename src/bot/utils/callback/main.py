@@ -27,12 +27,13 @@ class CallbackData:
         add = _Inner()
         settings = _Inner()
         auth_with_qr = _Inner()
+        switch_network = _Inner()
 
     class AccountSettings(metaclass=MetaInner):
         turn = _Inner()
         remove = _Inner()
         dialogs = _Inner()
-        
+
     class Dialogs(metaclass=MetaInner):
         move = _Inner()
         update = _Inner()

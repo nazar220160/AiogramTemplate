@@ -25,9 +25,11 @@ class TelegramApplication(TelegramClient):
         phone_number: Optional[int] = None,
         session_factory: Optional[async_sessionmaker[AsyncSession]] = None,
         bot: Optional[MyBot] = None,
+        test_net: Optional[bool] = False,
     ) -> None:
         super().__init__(session, **config.telegram.params)
-        # self.session.set_dc(2, "149.154.167.40", 443)
+        if test_net:
+            self.session.set_dc(2, "149.154.167.40", 443)
 
         self.config = config
         self.user_id = user_id
@@ -35,6 +37,7 @@ class TelegramApplication(TelegramClient):
         self.phone_number = phone_number
         self.session_factory = session_factory
         self.bot = bot
+        self.test_net = test_net
 
     async def copy_message(
         self, message: types.Message, chat_id: int, reply_to: Optional[int] = None

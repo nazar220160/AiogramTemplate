@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, List, Optional
 from sqlalchemy import (
     JSON,
     BigInteger,
+    Boolean,
     ForeignKey,
     String,
 )
@@ -24,6 +25,7 @@ class Session(ModelWithTimeMixin, ModelWithIDMixin, Base):
     username: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
     session: Mapped[str] = mapped_column(String(362), unique=True)
     proxy: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=None)
+    test_net: Mapped[bool] = mapped_column(Boolean, default=False)
 
     user: Mapped["User"] = relationship("User", back_populates="sessions")
     dialogs: Mapped[List["Dialog"]] = relationship("Dialog", back_populates="session")

@@ -139,7 +139,8 @@ class Session(DTO):
     username: Optional[str] = None
     session: str
     proxy: Optional[dict] = None
-    
+    test_net: bool
+
     user: Optional["User"] = None
     dialogs: List["Dialog"]
 
@@ -156,6 +157,7 @@ class SessionCreate(DTO):
     username: Optional[str] = None
     session: str
     proxy: Optional[dict] = None
+    test_net: Optional[bool] = False
 
 
 class SessionUpdate(DTO):
@@ -166,6 +168,7 @@ class SessionUpdate(DTO):
     username: Optional[str] = None
     session: Optional[str] = None
     proxy: Optional[dict] = None
+    test_net: Optional[bool] = None
 
 
 class Dialog(DTO):

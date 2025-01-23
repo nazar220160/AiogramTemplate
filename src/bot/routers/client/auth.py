@@ -33,6 +33,14 @@ async def add_account(callback: types.CallbackQuery, state: FSMContext):
     await state.set_data(data={"message_id": mes.message_id})
 
 
+@client_router.callback_query(lambda c: Cd.extract(c.data).data == Cd.Accounts.switch_network())
+async def switch_network(callback: types.CallbackQuery):
+    data = Cd.extract(callback.message.reply_markup.inline_keyboard[0][0].callback_data)
+    test_net = bool(int(data.args[0]))
+
+    await callback.message.edit_reply_markup(reply_markup=keyboards.auth_account(not test_net))
+
+
 @client_router.callback_query(
     lambda c: Cd.extract(c.data).data == Cd.Accounts.auth_with_qr(),
     SessionCreation.phone_number,
@@ -46,6 +54,10 @@ async def add_account_with_qr(
     config: Config,
     bot: MyBot,
 ):
+
+    data = Cd.extract(callback.message.reply_markup.inline_keyboard[0][0].callback_data)
+    test_net = bool(int(data.args[0]))
+
     await state.clear()
     await callback.message.delete()
 
@@ -59,6 +71,7 @@ async def add_account_with_qr(
         config=config,
         session_factory=session_factory,
         bot=bot,
+        test_net=test_net,
     )
 
     await client.connect()
@@ -106,6 +119,10 @@ async def get_phone_number(
     config: Config,
     session_factory,
 ):
+
+    data = Cd.extract(message.reply_markup.inline_keyboard[0][0].callback_data)
+    test_net = bool(int(data.args[0]))
+
     phone_number = message.text.replace("+", "").replace(" ", "")
 
     non_auth_session = sessions.get_client(
@@ -120,6 +137,7 @@ async def get_phone_number(
         config=config,
         phone_number=phone_number,
         session_factory=session_factory,
+        test_net=test_net,
     )
     await client.connect()
 

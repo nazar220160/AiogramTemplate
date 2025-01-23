@@ -88,6 +88,7 @@ async def main() -> None:
             phone_number=telegram_session.phone_number,
             session_factory=session_factory,
             bot=bot,
+            test_net=telegram_session.test_net
         )
 
         apps.append(client)
