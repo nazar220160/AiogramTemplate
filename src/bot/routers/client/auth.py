@@ -68,7 +68,7 @@ async def add_account_with_qr(
     mes = await callback.message.answer_photo(
         photo=types.BufferedInputFile(qr_code_image, filename="auth_code"),
         caption=_(texts.AUTH_QR_CODE),
-        reply_markup=keyboards.inline.back(to=Cd.Start.accounts(), cancel=True),
+        reply_markup=keyboards.back(to=Cd.Start.accounts(), cancel=True),
     )
 
     await state.set_state(SessionCreation.phone_number)
@@ -237,7 +237,7 @@ async def add_account_hd(
     await bot.send_message(
         chat_id=user_id,
         text=_(texts.ACCOUNT_ADDED_SUCCESS),
-        reply_markup=keyboards.inline.accounts_list(pag),
+        reply_markup=keyboards.accounts_list(pag),
     )
 
     if client.is_connected():
