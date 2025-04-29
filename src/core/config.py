@@ -44,6 +44,21 @@ class BotConfig:
     token: str
     admins: List[int]
 
+    webhook_host: Optional[str] = field(default=None)
+    webhook_port: Optional[int] = field(default=None)
+    webhook_url: Optional[str] = field(default=None)
+    webhook_path: Optional[str] = field(default=None)
+    webhook_secret: Optional[str] = field(default=None)
+    
+    @property
+    def use_webhook(self) -> bool:
+        return (
+            self.webhook_host is not None
+            and self.webhook_port is not None
+            and self.webhook_url is not None
+            and self.webhook_path is not None
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class RedisConfig:
@@ -87,7 +102,15 @@ def load_config() -> Config:
             user=get_env("DB_USER"),
             password=get_env("DB_PASSWORD"),
         ),
-        bot=BotConfig(token=get_env("BOT_TOKEN"), admins=get_env("BOT_ADMINS", True)),
+        bot=BotConfig(
+            token=get_env("BOT_TOKEN"),
+            admins=get_env("BOT_ADMINS", True),
+            webhook_host=get_env("BOT_WEBHOOK_HOST"),
+            webhook_port=get_env("BOT_WEBHOOK_PORT", True),
+            webhook_url=get_env("BOT_WEBHOOK_URL"),
+            webhook_path=get_env("BOT_WEBHOOK_PATH"),
+            webhook_secret=get_env("BOT_WEBHOOK_SECRET"),
+        ),
         redis=RedisConfig(
             host=get_env("REDIS_HOST"),
             port=get_env("REDIS_PORT"),
