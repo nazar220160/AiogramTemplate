@@ -49,13 +49,14 @@ class BotConfig:
 class RedisConfig:
     host: Optional[str] = field(default=None)
     port: Optional[int] = field(default=None)
+    db: Optional[int] = field(default=None)
 
     @property
     def dict(self) -> Optional[dict]:
         if not self.host and not self.port:
             return None
 
-        return {"host": self.host, "port": self.port}
+        return {"host": self.host, "port": self.port, "db": self.db}
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,5 +91,6 @@ def load_config() -> Config:
         redis=RedisConfig(
             host=get_env("REDIS_HOST"),
             port=get_env("REDIS_PORT"),
+            db=get_env("REDIS_DB", True),
         ),
     )
