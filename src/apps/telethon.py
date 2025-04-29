@@ -39,6 +39,15 @@ class TelegramApplication(TelegramClient):
         self.bot = bot
         self.test_net = test_net
 
+    # def __getattribute__(self, name):
+    #     attr = super().__getattribute__(name)
+    #     if callable(attr):
+    #         def wrapper(*args, **kwargs):
+    #             print(f"Вызов метода: {name} с args: {args}, kwargs: {kwargs}")
+    #             return attr(*args, **kwargs)
+    #         return wrapper
+    #     return attr
+    
     async def copy_message(
         self, message: types.Message, chat_id: int, reply_to: Optional[int] = None
     ):

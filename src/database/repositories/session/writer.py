@@ -15,3 +15,7 @@ class SessionWriter(BaseInteractor[Session]):
             self.model.id == session_id, **query.model_dump(exclude_none=True)
         )
         return result[0] if result else None
+
+    async def delete(self, session_id: int) -> Optional[Session]:
+        result = await self.crud.delete(self.model.id == session_id)
+        return result[0] if result else None

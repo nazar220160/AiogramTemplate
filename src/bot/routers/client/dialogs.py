@@ -29,10 +29,9 @@ async def dialogs_update(
     client = sessions.get_client(database_id=account_id)
 
     try:
-        async with client:
-            await save_dialogs(
-                user_id=user_id, client=client, session_id=account_id, db=db
-            )
+        await save_dialogs(
+            user_id=user_id, client=client, session_id=account_id, db=db
+        )
     except ConnectionError as e:
         await db.uow.rollback()
         await callback.answer(str(e), show_alert=True)

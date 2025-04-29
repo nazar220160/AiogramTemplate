@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.fsm.context import FSMContext
 
 from src.apps.telethon import TelegramApplication, TelegramAppManager
 from src.bot import keyboards
@@ -11,7 +12,8 @@ from src.database.core.gateway import DatabaseGateway
 
 
 @client_router.callback_query(lambda c: Cd.extract(c.data).data == Cd.Start.accounts())
-async def start(callback: types.CallbackQuery, db: DatabaseGateway):
+async def start(callback: types.CallbackQuery, db: DatabaseGateway, state: FSMContext):
+    await state.clear()
     await callback.message.delete()
     sessions = await db.session.reader.select_many(user_id=callback.from_user.id)
     pag = paginate(list_items=sessions, items_per_page=6)
@@ -70,11 +72,10 @@ async def account_setting(
     if data.data == Cd.AccountSettings.remove():
         if client.is_connected():
             await client.disconnect()
-        await db.session.delete(session_id=session_id)
 
-        db_sessions = await db.session.reader.select_many(
-            user_id=callback.from_user.id
-        )
+        await db.session.writer.delete(session_id=session_id)
+
+        db_sessions = await db.session.reader.select_many(user_id=callback.from_user.id)
         pag = paginate(db_sessions, 6)
 
         reply_markup = keyboards.accounts_list(pag)
@@ -105,7 +106,7 @@ async def account_setting(
 
         await callback.message.edit_text(text=text, reply_markup=reply_markup)
         await callback.answer(text=info, show_alert=True)
-        
+
     elif data.data == Cd.AccountSettings.dialogs():
         dialogs = await db.dialog.reader.select_many(session_id=session_id)
         pag = paginate(dialogs, 10)

@@ -30,13 +30,16 @@ async def add_account(callback: types.CallbackQuery, state: FSMContext):
         reply_markup=keyboards.auth_account(),
     )
     await state.set_state(SessionCreation.phone_number)
-    await state.set_data(data={"message_id": mes.message_id})
+    await state.set_data(data={"message_id": mes.message_id, "test_net": False})
 
 
 @client_router.callback_query(lambda c: Cd.extract(c.data).data == Cd.Accounts.switch_network())
-async def switch_network(callback: types.CallbackQuery):
+async def switch_network(callback: types.CallbackQuery, state: FSMContext):
     data = Cd.extract(callback.message.reply_markup.inline_keyboard[0][0].callback_data)
     test_net = bool(int(data.args[0]))
+
+    await state.set_state(SessionCreation.phone_number)
+    await state.update_data(data={"test_net": not test_net})
 
     await callback.message.edit_reply_markup(reply_markup=keyboards.auth_account(not test_net))
 
@@ -119,9 +122,8 @@ async def get_phone_number(
     config: Config,
     session_factory,
 ):
-
-    data = Cd.extract(message.reply_markup.inline_keyboard[0][0].callback_data)
-    test_net = bool(int(data.args[0]))
+    state_data = await state.get_data()
+    test_net = bool(state_data.get("test_net", False))
 
     phone_number = message.text.replace("+", "").replace(" ", "")
 
@@ -140,8 +142,6 @@ async def get_phone_number(
         test_net=test_net,
     )
     await client.connect()
-
-    state_data = await state.get_data()
 
     try:
         res = await client.send_code_request(message.text)
