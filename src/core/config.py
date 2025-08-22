@@ -64,7 +64,7 @@ class BotConfig:
 class RedisConfig:
     host: Optional[str] = field(default=None)
     port: Optional[int] = field(default=None)
-    db: Optional[int] = field(default=None)
+    db: Optional[int] = field(default=0)
 
     @property
     def dict(self) -> Optional[dict]:
