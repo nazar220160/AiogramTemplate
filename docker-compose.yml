@@ -1,45 +1,72 @@
-version: "3"
-
 services:
   app:
-    build:
-      context: .
-      dockerfile: src/Dockerfile
+    build: .
     restart: always
     networks:
       - app-network
-    ports:
-      - '8080:8000'
+
     volumes:
-      - ./:/usr/src/project/
-    working_dir: /usr/src/project/
-    command: python -m src.bot
+      - ./databases:/app/databases:rw
+      - ./migrations:/app/migrations:ro
+
+    env_file:
+      - .env
+
+    working_dir: /app
+
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+    #   redis:
+    #     condition: service_healthy
 
   postgres:
     image: postgres:latest
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - database-data:/var/lib/postgresql/data/:rw
+
+    env_file:
+      - .env
+
     environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
     networks:
       - app-network
-    env_file:
-      - ./.env
-    ports:
-      - '5432'
+
+    command: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    profiles: ["postgres"]
 
   redis:
     image: redis:latest
     restart: always
+    volumes:
+      - redis-data:/data
+
     networks:
       - app-network
 
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    profiles: ["redis"]
+
 
 volumes:
-  postgres_data:
+  redis-data:
+  database-data:
 
 networks:
   app-network:

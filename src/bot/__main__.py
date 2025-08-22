@@ -82,10 +82,7 @@ def main():
     if config.bot.use_webhook:
         run_webhook(dp, bot, config)
     else:
-        try:
-            asyncio.run(run_polling(dp, bot, config))
-        except KeyboardInterrupt:
-            ...
+        asyncio.run(run_polling(dp, bot, config))
 
 
 if __name__ == "__main__":

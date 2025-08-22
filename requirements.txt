@@ -1,4 +1,4 @@
-aiogram==3.15.0
+aiogram==3.22.0
 SQLAlchemy==2.0.36
 alembic==1.14.0
 nest-asyncio==1.6.0
@@ -9,3 +9,4 @@ pydantic-settings==2.6.1
 pydantic==2.9.2
 aiosqlite==0.20.0
 Babel==2.16.0
+greenlet
